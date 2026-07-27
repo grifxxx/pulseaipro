@@ -12,10 +12,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const locale = resolveLocale(headersList.get("accept-language"));
   const t = getStrings(locale);
+  // og:/twitter: pinned to Russian — see the comment in app/layout.tsx.
+  const ru = getStrings("ru");
   return {
     title: t.homeTitle,
     description: t.homeSubtitle,
     alternates: { canonical: "/" },
+    openGraph: { title: ru.homeTitle, description: ru.homeSubtitle },
   };
 }
 

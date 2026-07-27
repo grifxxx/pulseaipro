@@ -6,10 +6,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const locale = resolveLocale(headersList.get("accept-language"));
   const t = getStrings(locale);
+  const ru = getStrings("ru");
   return {
     title: t.aboutTitle,
     description: t.aboutIntro,
     alternates: { canonical: "/about" },
+    openGraph: { title: ru.aboutTitle, description: ru.aboutIntro },
   };
 }
 

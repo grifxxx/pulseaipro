@@ -24,12 +24,14 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
   const latest = notes[0];
   const title = `${latest.name} (${latest.ticker})`;
   const description = truncateForDescription(latest.summary[locale]);
+  // og:/twitter: pinned to Russian — see the comment in app/layout.tsx.
+  const ogDescription = truncateForDescription(latest.summary.ru);
 
   return {
     title,
     description,
     alternates: { canonical: `/asset/${encodeURIComponent(latest.ticker)}` },
-    openGraph: { title, description },
+    openGraph: { title, description: ogDescription },
   };
 }
 

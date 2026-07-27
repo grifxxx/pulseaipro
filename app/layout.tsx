@@ -33,12 +33,17 @@ const ROOT_COPY = {
   },
 };
 
+// Share-preview crawlers (Telegram, VK, WhatsApp, …) don't send a reliable — or any —
+// Accept-Language header, so og:/twitter: fields are pinned to Russian (the primary
+// audience) unconditionally instead of following the visitor-resolved locale. The plain
+// title/description below still follow Accept-Language, since those drive the real <title>
+// tag for actual browser visitors and most pages override them anyway.
+const OG_COPY = ROOT_COPY.ru;
+
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const locale = resolveLocale(headersList.get("accept-language"));
   const copy = ROOT_COPY[locale];
-  const ogLocale = locale === "ru" ? "ru_RU" : "en_US";
-  const ogAlternate = locale === "ru" ? "en_US" : "ru_RU";
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -50,15 +55,14 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
-      title: copy.title,
-      description: copy.description,
-      locale: ogLocale,
-      alternateLocale: ogAlternate,
+      title: OG_COPY.title,
+      description: OG_COPY.description,
+      locale: "ru_RU",
     },
     twitter: {
       card: "summary_large_image",
-      title: copy.title,
-      description: copy.description,
+      title: OG_COPY.title,
+      description: OG_COPY.description,
     },
   };
 }

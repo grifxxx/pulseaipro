@@ -22,12 +22,15 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
 
   const title = article.title[locale];
   const description = truncateForDescription(article.dek[locale]);
+  // og:/twitter: pinned to Russian — see the comment in app/layout.tsx.
+  const ogTitle = article.title.ru;
+  const ogDescription = truncateForDescription(article.dek.ru);
 
   return {
     title,
     description,
     alternates: { canonical: `/blog/${article.slug}` },
-    openGraph: { title, description, images: [article.coverImageUrl] },
+    openGraph: { title: ogTitle, description: ogDescription, images: [article.coverImageUrl] },
   };
 }
 

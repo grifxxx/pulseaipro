@@ -1,28 +1,17 @@
 import { ImageResponse } from "next/og";
-import { headers } from "next/headers";
-import { resolveLocale } from "@/lib/i18n";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const COPY = {
-  ru: {
-    tag: "ИИ · Акции · Крипто",
-    headline: "Ежедневный ИИ-дайджест новостей по акциям и крипте",
-    subtitle: "Информационный контент. Не является инвестиционной рекомендацией.",
-  },
-  en: {
-    tag: "AI · Stocks · Crypto",
-    headline: "Daily AI digest of stock & crypto news",
-    subtitle: "Informational only — not investment advice.",
-  },
+// Pinned to Russian, not Accept-Language-based: share-preview crawlers (Telegram, VK, …)
+// don't send a reliable language signal, and the primary audience is Russian-speaking.
+const copy = {
+  tag: "ИИ · Акции · Крипто",
+  headline: "Ежедневный ИИ-дайджест новостей по акциям и крипте",
+  subtitle: "Информационный контент. Не является инвестиционной рекомендацией.",
 };
 
-export default async function OpengraphImage() {
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
-  const copy = COPY[locale];
-
+export default function OpengraphImage() {
   return new ImageResponse(
     (
       <div
@@ -93,7 +82,7 @@ export default async function OpengraphImage() {
         <div
           style={{
             display: "flex",
-            width: "fit-content",
+            alignSelf: "flex-start",
             fontSize: 20,
             fontWeight: 600,
             color: "#a5b4fc",
