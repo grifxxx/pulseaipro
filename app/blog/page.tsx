@@ -2,13 +2,16 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { getArticlesPage } from "@/lib/db/articles-queries";
 import { ArticleCard } from "@/components/ArticleCard";
+import { SponsorCard } from "@/components/SponsorCard";
 import { BlogPagination } from "@/components/BlogPagination";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
+import { interleaveSponsors } from "@/lib/sponsors";
 import type { Article } from "@/lib/types";
 
 export const revalidate = 0;
 
 const PAGE_SIZE = 9;
+const SPONSOR_EVERY_N = 6;
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
@@ -69,9 +72,16 @@ export default async function BlogPage({
       {!loadError && articles.length > 0 && (
         <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article) => (
-              <ArticleCard key={article.id} article={localizeArticle(article, locale)} locale={locale} />
-            ))}
+            {(locale === "ru"
+              ? interleaveSponsors(articles, SPONSOR_EVERY_N, currentPage)
+              : articles.map((item) => ({ kind: "item" as const, item }))
+            ).map((cell, i) =>
+              cell.kind === "item" ? (
+                <ArticleCard key={cell.item.id} article={localizeArticle(cell.item, locale)} locale={locale} />
+              ) : (
+                <SponsorCard key={`sponsor-${i}`} offer={cell.offer} />
+              )
+            )}
           </div>
           <BlogPagination currentPage={currentPage} totalPages={totalPages} />
         </>

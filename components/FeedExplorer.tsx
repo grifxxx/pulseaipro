@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import type { DisplayAttentionNote, Locale, Market, Sentiment } from "@/lib/types";
 import { getStrings } from "@/lib/i18n";
 import { AssetCard } from "@/components/AssetCard";
+import { SponsorCard } from "@/components/SponsorCard";
 import { Pagination } from "@/components/Pagination";
+import { interleaveSponsors } from "@/lib/sponsors";
+
+const SPONSOR_EVERY_N = 6;
 
 type MarketFilter = "all" | Market;
 type SortBy = "newest" | "changeDesc" | "changeAsc" | "alpha";
@@ -205,9 +209,16 @@ export function FeedExplorer({ notes, locale }: { notes: DisplayAttentionNote[];
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {paged.map((note) => (
-              <AssetCard key={note.id} note={note} locale={locale} />
-            ))}
+            {(locale === "ru"
+              ? interleaveSponsors(paged, SPONSOR_EVERY_N, currentPage)
+              : paged.map((item) => ({ kind: "item" as const, item }))
+            ).map((cell, i) =>
+              cell.kind === "item" ? (
+                <AssetCard key={cell.item.id} note={cell.item} locale={locale} />
+              ) : (
+                <SponsorCard key={`sponsor-${i}`} offer={cell.offer} />
+              )
+            )}
           </div>
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={goToPage} />
         </>

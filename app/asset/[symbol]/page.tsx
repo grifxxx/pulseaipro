@@ -1,9 +1,12 @@
+import { Fragment } from "react";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { getAssetHistory } from "@/lib/db/queries";
 import { AssetCard } from "@/components/AssetCard";
+import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
 import { assetArticleJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
+import { offerForKey } from "@/lib/sponsors";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -64,8 +67,11 @@ export default async function AssetHistoryPage({ params }: PageParams) {
       </h1>
       <p className="text-sm text-muted">{t.historySubtitle}</p>
       <div className="flex flex-col gap-4 mt-2">
-        {notes.map((note) => (
-          <AssetCard key={note.id} note={localizeNote(note, locale)} locale={locale} />
+        {notes.map((note, i) => (
+          <Fragment key={note.id}>
+            <AssetCard note={localizeNote(note, locale)} locale={locale} />
+            {i === 0 && locale === "ru" && <SponsorCard offer={offerForKey(latest.ticker)} />}
+          </Fragment>
         ))}
       </div>
     </div>

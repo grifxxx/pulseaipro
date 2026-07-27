@@ -4,8 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticleBySlug } from "@/lib/db/articles-queries";
 import { ArticleBody } from "@/components/ArticleBody";
+import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
 import { blogPostingJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
+import { offerForKey } from "@/lib/sponsors";
 
 export const revalidate = 0;
 
@@ -71,6 +73,8 @@ export default async function ArticlePage({ params }: PageParams) {
           {t.publishedLabel}: {new Date(display.publishedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
         </div>
       </div>
+
+      {locale === "ru" && <SponsorCard offer={offerForKey(article.id)} />}
 
       <ArticleBody blocks={display.body} />
 
