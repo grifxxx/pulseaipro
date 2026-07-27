@@ -257,3 +257,15 @@ export async function getNotesInRange(fromISO: string, toISO: string): Promise<A
   if (error) throw new Error(`getNotesInRange failed: ${error.message}`);
   return (data ?? []).map(rowToAttentionNote);
 }
+
+/** Most recent notes, newest first — not deduped by symbol (unlike getLatestFeed). Used for the RSS feed. */
+export const getRecentNotesForFeed = cache(async (limit: number): Promise<AttentionNoteRow[]> => {
+  const db = getPublicClient();
+  const { data, error } = await db
+    .from("attention_notes")
+    .select(NOTE_SELECT_WITH_ASSET)
+    .order("generated_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`getRecentNotesForFeed failed: ${error.message}`);
+  return (data ?? []).map(rowToAttentionNote);
+});
