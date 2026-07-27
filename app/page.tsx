@@ -12,13 +12,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const locale = resolveLocale(headersList.get("accept-language"));
   const t = getStrings(locale);
-  // og:/twitter: pinned to Russian — see the comment in app/layout.tsx.
-  const ru = getStrings("ru");
   return {
     title: t.homeTitle,
     description: t.homeSubtitle,
     alternates: { canonical: "/" },
-    openGraph: { title: ru.homeTitle, description: ru.homeSubtitle },
+    // No openGraph override here: the homepage share card should lead with the brand
+    // name and what the service does ("PulseAiPro — ежедневный ИИ-дайджест…"), not the
+    // page's on-site heading ("Сегодня в центре внимания") — so it inherits the
+    // branded default from app/layout.tsx instead of shadowing it.
   };
 }
 
