@@ -20,22 +20,48 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${SITE_NAME} — daily AI stock & crypto news digest`,
-    template: `%s · ${SITE_NAME}`,
+const ROOT_COPY = {
+  ru: {
+    title: `${SITE_NAME} — ежедневный ИИ-дайджест новостей по акциям и крипте`,
+    description:
+      "Ежедневные ИИ-сводки о том, что происходит с акциями США, российскими акциями и криптовалютами — информационный контент, не инвестиционная рекомендация.",
   },
-  description:
-    "Daily AI-generated summaries of what's moving US stocks, Russian stocks and crypto in the news — informational only, not investment advice.",
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-  },
-  twitter: {
-    card: "summary_large_image",
+  en: {
+    title: `${SITE_NAME} — daily AI stock & crypto news digest`,
+    description:
+      "Daily AI-generated summaries of what's moving US stocks, Russian stocks and crypto in the news — informational only, not investment advice.",
   },
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const locale = resolveLocale(headersList.get("accept-language"));
+  const copy = ROOT_COPY[locale];
+  const ogLocale = locale === "ru" ? "ru_RU" : "en_US";
+  const ogAlternate = locale === "ru" ? "en_US" : "ru_RU";
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: copy.title,
+      template: `%s · ${SITE_NAME}`,
+    },
+    description: copy.description,
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: copy.title,
+      description: copy.description,
+      locale: ogLocale,
+      alternateLocale: ogAlternate,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: copy.title,
+      description: copy.description,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
