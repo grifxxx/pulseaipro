@@ -83,7 +83,10 @@ export async function GET() {
   ]);
 
   const items = [
-    ...articles.slice(0, MAX_ARTICLE_ITEMS).map(articleToItem),
+    ...articles
+      .filter((a) => a.kind !== "sponsored")
+      .slice(0, MAX_ARTICLE_ITEMS)
+      .map(articleToItem),
     ...notes.map(noteToItem),
   ].sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
 

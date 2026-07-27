@@ -7,7 +7,7 @@ import { ArticleBody } from "@/components/ArticleBody";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
 import { blogPostingJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
-import { offerForKey } from "@/lib/sponsors";
+import { SPONSOR_OFFERS, offerForKey } from "@/lib/sponsors";
 
 export const revalidate = 0;
 
@@ -41,6 +41,8 @@ export default async function ArticlePage({ params }: PageParams) {
   if (!article) notFound();
 
   const display = localizeArticle(article, locale);
+  const isSponsored = article.kind === "sponsored";
+  const sponsoredOffer = isSponsored ? SPONSOR_OFFERS.find((o) => o.id === "tbank-autofollow") : undefined;
   const jsonLd = blogPostingJsonLd({
     headline: display.title,
     description: display.dek,
@@ -67,6 +69,13 @@ export default async function ArticlePage({ params }: PageParams) {
       />
 
       <div className="flex flex-col gap-2">
+        {isSponsored && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+            <span className="font-semibold">Партнёрский материал · Реклама.</span> Мы получаем
+            вознаграждение, если вы воспользуетесь предложением по ссылкам в этой статье.
+            {sponsoredOffer ? ` Рекламодатель: ${sponsoredOffer.advertiser}.` : ""}
+          </div>
+        )}
         <h1 className="text-3xl font-bold tracking-tight">{display.title}</h1>
         <p className="text-base text-muted">{display.dek}</p>
         <div className="text-xs text-muted/70">
@@ -74,7 +83,8 @@ export default async function ArticlePage({ params }: PageParams) {
         </div>
       </div>
 
-      {locale === "ru" && <SponsorCard offer={offerForKey(article.id)} />}
+      {sponsoredOffer && <SponsorCard offer={sponsoredOffer} />}
+      {locale === "ru" && !isSponsored && <SponsorCard offer={offerForKey(article.id)} />}
 
       <ArticleBody blocks={display.body} />
 

@@ -112,7 +112,7 @@ export type ArticleBlock =
   | ({ type: "asset" } & ArticleAssetWidget)
   | { type: "chart"; src: string; caption: Localized<string> };
 
-export type ArticleKind = "daily" | "retrospective";
+export type ArticleKind = "daily" | "retrospective" | "sponsored";
 export type RetrospectivePeriod = "weekly" | "monthly" | "semiannual" | "yearly";
 
 export interface Article {

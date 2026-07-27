@@ -12,6 +12,7 @@ const PERIOD_DOT = "bg-pink-500";
 
 export function ArticleCard({ article, locale }: { article: DisplayArticle; locale: Locale }) {
   const t = getStrings(locale);
+  const isSponsored = article.kind === "sponsored";
 
   const badgeLabel =
     article.kind === "retrospective" && article.period
@@ -25,7 +26,13 @@ export function ArticleCard({ article, locale }: { article: DisplayArticle; loca
   const badgeDot = article.kind === "retrospective" ? PERIOD_DOT : MARKET_DOT[article.market ?? "us_stock"];
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-accent/40 hover:shadow-lg hover:shadow-black/[0.03] dark:hover:shadow-black/20">
+    <article
+      className={`group flex flex-col overflow-hidden rounded-2xl border transition-all hover:shadow-lg hover:shadow-black/[0.03] dark:hover:shadow-black/20 ${
+        isSponsored
+          ? "border-amber-500/25 bg-amber-500/[0.04] hover:border-amber-500/45"
+          : "border-border bg-surface hover:border-accent/40"
+      }`}
+    >
       <Link href={`/blog/${article.slug}`} className="block">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -36,8 +43,16 @@ export function ArticleCard({ article, locale }: { article: DisplayArticle; loca
       </Link>
       <div className="flex flex-col gap-2 p-5">
         <div className="flex items-center gap-1.5 text-[11px] text-muted uppercase tracking-wide">
-          <span className={`h-1.5 w-1.5 rounded-full ${badgeDot}`} />
-          {badgeLabel}
+          {isSponsored ? (
+            <span className="rounded-full bg-amber-500/15 px-2 py-0.5 font-semibold text-amber-700 dark:text-amber-400">
+              Реклама
+            </span>
+          ) : (
+            <>
+              <span className={`h-1.5 w-1.5 rounded-full ${badgeDot}`} />
+              {badgeLabel}
+            </>
+          )}
         </div>
         <Link href={`/blog/${article.slug}`} className="font-semibold tracking-tight leading-snug group-hover:text-accent transition-colors">
           {article.title}

@@ -43,7 +43,9 @@ export default async function BlogPage({
 
   try {
     const result = await getArticlesPage(requestedPage, PAGE_SIZE);
-    articles = result.articles;
+    // Sponsored (RU-only financial offer) content is filtered out of the EN blog —
+    // the count/pagination stays server-computed, so an EN page may show one fewer card.
+    articles = locale === "ru" ? result.articles : result.articles.filter((a) => a.kind !== "sponsored");
     totalPages = Math.max(1, Math.ceil(result.totalCount / PAGE_SIZE));
     currentPage = result.page;
   } catch (err) {
