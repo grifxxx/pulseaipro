@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/types";
 import { getStrings } from "@/lib/i18n";
-import { LEGAL_ADDRESS, LEGAL_ENTITY_NAME, LEGAL_INN, LEGAL_OGRNIP } from "@/lib/legal";
+import { LEGAL_ENTITY_NAME, LEGAL_INN, LEGAL_OGRNIP } from "@/lib/legal";
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   const t = getStrings(locale);
@@ -23,7 +23,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       </div>
       <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-border/60 pt-4">
         <p className="max-w-md text-muted/70">
-          {LEGAL_ENTITY_NAME} · ОГРНИП {LEGAL_OGRNIP} · ИНН {LEGAL_INN} · {LEGAL_ADDRESS}
+          {LEGAL_ENTITY_NAME} · ОГРНИП {LEGAL_OGRNIP} · ИНН {LEGAL_INN}
         </p>
         <div className="flex gap-4">
           <Link href="/privacy" className="hover:text-foreground transition-colors">
