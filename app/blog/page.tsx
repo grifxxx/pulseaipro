@@ -1,0 +1,81 @@
+import { headers } from "next/headers";
+import type { Metadata } from "next";
+import { getArticlesPage } from "@/lib/db/articles-queries";
+import { ArticleCard } from "@/components/ArticleCard";
+import { BlogPagination } from "@/components/BlogPagination";
+import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
+import type { Article } from "@/lib/types";
+
+export const revalidate = 0;
+
+const PAGE_SIZE = 9;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const locale = resolveLocale(headersList.get("accept-language"));
+  const t = getStrings(locale);
+  return {
+    title: t.blogTitle,
+    description: t.blogSubtitle,
+    alternates: { canonical: "/blog" },
+  };
+}
+
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const requestedPage = Math.max(1, Number(pageParam) || 1);
+
+  const headersList = await headers();
+  const locale = resolveLocale(headersList.get("accept-language"));
+  const t = getStrings(locale);
+
+  let articles: Article[] = [];
+  let totalPages = 1;
+  let currentPage = requestedPage;
+  let loadError: string | null = null;
+
+  try {
+    const result = await getArticlesPage(requestedPage, PAGE_SIZE);
+    articles = result.articles;
+    totalPages = Math.max(1, Math.ceil(result.totalCount / PAGE_SIZE));
+    currentPage = result.page;
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : String(err);
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.blogTitle}</h1>
+        <p className="text-sm sm:text-base text-muted max-w-xl">{t.blogSubtitle}</p>
+      </div>
+
+      {loadError && (
+        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 text-rose-700 dark:text-rose-300 text-sm p-4">
+          {t.loadErrorPrefix} ({loadError}). {t.loadErrorSuffix}
+        </div>
+      )}
+
+      {!loadError && articles.length === 0 && (
+        <div className="rounded-xl border border-border bg-surface text-sm p-6 text-muted">
+          {t.blogEmptyState}
+        </div>
+      )}
+
+      {!loadError && articles.length > 0 && (
+        <>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article) => (
+              <ArticleCard key={article.id} article={localizeArticle(article, locale)} locale={locale} />
+            ))}
+          </div>
+          <BlogPagination currentPage={currentPage} totalPages={totalPages} />
+        </>
+      )}
+    </div>
+  );
+}

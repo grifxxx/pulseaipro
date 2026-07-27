@@ -1,0 +1,93 @@
+import Link from "next/link";
+import type { DisplayAttentionNote, Locale, Market } from "@/lib/types";
+import { getStrings } from "@/lib/i18n";
+import { SentimentBadge } from "@/components/SentimentBadge";
+import { SourceList } from "@/components/SourceList";
+import { AssetLogo } from "@/components/AssetLogo";
+
+const MARKET_DOT: Record<Market, string> = {
+  us_stock: "bg-sky-500",
+  ru_stock: "bg-violet-500",
+  crypto: "bg-orange-500",
+};
+
+const CURRENCY_SYMBOL: Record<string, string> = {
+  USD: "$",
+  RUB: "₽",
+};
+
+export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale: Locale }) {
+  const t = getStrings(locale);
+  const changePct = note.priceSnapshot?.changePct24h;
+  const isUp = changePct != null && changePct >= 0;
+  const marketLabel =
+    note.market === "us_stock" ? t.usStockLabel : note.market === "ru_stock" ? t.ruStockLabel : t.cryptoLabel;
+  const currencySymbol = note.priceSnapshot ? CURRENCY_SYMBOL[note.priceSnapshot.currency] ?? "" : "";
+
+  return (
+    <article className="group flex min-w-0 flex-col gap-3.5 rounded-2xl border border-border bg-surface p-5 transition-all hover:border-accent/40 hover:shadow-lg hover:shadow-black/[0.03] dark:hover:shadow-black/20">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 items-start gap-2.5">
+          <AssetLogo ticker={note.ticker} logoUrl={note.logoUrl} />
+          <div className="min-w-0">
+            <Link
+              href={`/asset/${note.ticker}`}
+              className="font-semibold tracking-tight group-hover:text-accent transition-colors"
+            >
+              {note.name}
+            </Link>
+            <div className="flex items-center gap-1.5 text-[11px] text-muted uppercase tracking-wide mt-0.5">
+              <span className={`h-1.5 w-1.5 rounded-full ${MARKET_DOT[note.market]}`} />
+              {note.ticker} · {marketLabel}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <SentimentBadge sentiment={note.sentiment} locale={locale} />
+          {note.priceSnapshot && (
+            <div className="text-sm font-mono tabular-nums">
+              {currencySymbol}
+              {note.priceSnapshot.price.toLocaleString()}{" "}
+              {changePct != null && (
+                <span className={isUp ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
+                  {isUp ? "▲" : "▼"} {Math.abs(changePct).toFixed(2)}%
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <p className="text-sm text-foreground/85 leading-relaxed">{note.summary}</p>
+
+      <div>
+        <div className="text-[11px] font-semibold text-muted uppercase tracking-wide mb-1">
+          {t.whyNotableLabel}
+        </div>
+        <p className="text-sm text-foreground/85 leading-relaxed">{note.whyNotable}</p>
+      </div>
+
+      {note.keyFacts.length > 0 && (
+        <ul className="flex flex-col gap-1.5 text-sm text-foreground/85">
+          {note.keyFacts.map((fact, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="text-accent select-none">•</span>
+              <span className="leading-relaxed">{fact}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="text-xs text-muted border-t border-border pt-3 leading-relaxed">
+        <span className="font-medium text-foreground/70">{t.risksLabel}: </span>
+        {note.riskNotes}
+      </div>
+
+      <SourceList sources={note.sources} />
+
+      <div className="text-[11px] text-muted/70">
+        {t.updatedLabel}: {new Date(note.generatedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
+      </div>
+    </article>
+  );
+}

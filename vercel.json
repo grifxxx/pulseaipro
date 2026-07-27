@@ -1,0 +1,28 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/run-pipeline",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/generate-articles",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/generate-retrospective?period=weekly",
+      "schedule": "0 15 * * 1"
+    },
+    {
+      "path": "/api/cron/generate-retrospective?period=monthly",
+      "schedule": "0 16 1 * *"
+    },
+    {
+      "path": "/api/cron/generate-retrospective?period=semiannual",
+      "schedule": "0 17 1 1,7 *"
+    },
+    {
+      "path": "/api/cron/generate-retrospective?period=yearly",
+      "schedule": "0 18 1 1 *"
+    }
+  ]
+}
