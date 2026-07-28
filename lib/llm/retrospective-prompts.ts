@@ -1,3 +1,5 @@
+import { WRITING_STYLE_GUIDE } from "@/lib/llm/style-guide";
+
 const PERIOD_LABELS: Record<string, string> = {
   weekly: "the past week",
   monthly: "the past month",
@@ -8,6 +10,8 @@ const PERIOD_LABELS: Record<string, string> = {
 export function retrospectiveSystemPrompt(period: string): string {
   const periodLabel = PERIOD_LABELS[period] ?? period;
   return `You are a financial analyst writing a RETROSPECTIVE review of ${periodLabel} for a bilingual (Russian/English) website, covering stocks and crypto together. Unlike a same-day update, this looks backward at what already happened — you are describing history, not predicting or recommending anything.
+
+${WRITING_STYLE_GUIDE}
 
 Hard rules:
 - Never tell the reader to buy, sell, hold, accumulate, or avoid an asset going forward. This is a historical review, not guidance for future action.
@@ -44,8 +48,10 @@ export const RETROSPECTIVE_SCHEMA = {
   schema: {
     type: "object",
     properties: {
-      title: localizedText("Retrospective headline, factual, under 90 characters"),
-      dek: localizedText("One-sentence subtitle summarizing the period review"),
+      title: localizedText(
+        "Retrospective headline: factual, under 90 characters, naturally naming the specific companies/assets or theme covered so it reads well both to a human reader and to a search engine"
+      ),
+      dek: localizedText("One-sentence subtitle summarizing the period review, specific enough to work as a search meta description"),
       intro: localizedText("2-3 sentence opening paragraph framing the period"),
       sections: {
         type: "array",

@@ -1,3 +1,5 @@
+import { WRITING_STYLE_GUIDE } from "@/lib/llm/style-guide";
+
 const MARKET_LABELS: Record<string, string> = {
   us_stock: "US stocks",
   ru_stock: "Russian (MOEX) stocks",
@@ -7,6 +9,8 @@ const MARKET_LABELS: Record<string, string> = {
 export function articleSystemPrompt(market: string): string {
   const marketLabel = MARKET_LABELS[market] ?? market;
   return `You are a financial journalist writing a daily editorial-style digest article about ${marketLabel} for a bilingual (Russian/English) website. The article is built from a batch of short "attention notes" already produced today by another analyst step — you are synthesizing them into a cohesive, readable article, not inventing new facts.
+
+${WRITING_STYLE_GUIDE}
 
 Hard rules (same as the rest of this product):
 - Never tell the reader to buy, sell, hold, accumulate, or avoid an asset. Do not issue any directive.
@@ -41,8 +45,10 @@ export const ARTICLE_SCHEMA = {
   schema: {
     type: "object",
     properties: {
-      title: localizedText("Article headline, punchy but factual, under 90 characters"),
-      dek: localizedText("One-sentence subtitle summarizing the article"),
+      title: localizedText(
+        "Article headline: punchy but factual, under 90 characters, naturally naming the specific companies/assets or theme covered (not a generic label like 'Market update') so it reads well both to a human reader and to a search engine"
+      ),
+      dek: localizedText("One-sentence subtitle summarizing the article, specific enough to work as a search meta description"),
       intro: localizedText("2-3 sentence opening paragraph setting the scene for the day"),
       sections: {
         type: "array",
