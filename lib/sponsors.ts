@@ -40,6 +40,15 @@ export const SPONSOR_OFFERS: SponsorOffer[] = [
     advertiser: "АО «Т-Банк»",
     erid: "Kra23xCCG",
   },
+  {
+    id: "ozon-bank-card",
+    title: "Дебетовая карта Ozon Банк",
+    description: "Кэшбэк Ozon-баллами на покупки и бесплатное обслуживание карты.",
+    ctaLabel: "Оформить карту",
+    url: "https://trk.ppdu.ru/click/FRxXKpQc?erid=2SDnjcSQqFP",
+    advertiser: "ООО «Озон Банк»",
+    erid: "2SDnjcSQqFP",
+  },
 ];
 
 export type FeedCell<T> = { kind: "item"; item: T } | { kind: "sponsor"; offer: SponsorOffer };
