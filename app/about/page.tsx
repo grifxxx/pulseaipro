@@ -2,18 +2,12 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
-  const t = getStrings(locale);
-  const ru = getStrings("ru");
-  return {
-    title: t.aboutTitle,
-    description: t.aboutIntro,
-    alternates: { canonical: "/about" },
-    openGraph: { title: ru.aboutTitle, description: ru.aboutIntro },
-  };
-}
+// title/description pinned to Russian — see the comment in app/layout.tsx.
+export const metadata: Metadata = {
+  title: getStrings("ru").aboutTitle,
+  description: getStrings("ru").aboutIntro,
+  alternates: { canonical: "/about" },
+};
 
 export default async function AboutPage() {
   const headersList = await headers();

@@ -13,18 +13,12 @@ export const revalidate = 0;
 const PAGE_SIZE = 9;
 const SPONSOR_EVERY_N = 6;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
-  const t = getStrings(locale);
-  const ru = getStrings("ru");
-  return {
-    title: t.blogTitle,
-    description: t.blogSubtitle,
-    alternates: { canonical: "/blog" },
-    openGraph: { title: ru.blogTitle, description: ru.blogSubtitle },
-  };
-}
+// title/description pinned to Russian — see the comment in app/layout.tsx.
+export const metadata: Metadata = {
+  title: getStrings("ru").blogTitle,
+  description: getStrings("ru").blogSubtitle,
+  alternates: { canonical: "/blog" },
+};
 
 export default async function BlogPage({
   searchParams,

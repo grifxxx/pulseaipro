@@ -15,22 +15,19 @@ type PageParams = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
   const { slug } = await params;
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
   const article = await getArticleBySlug(slug);
   if (!article) return {};
 
-  const title = article.title[locale];
-  const description = truncateForDescription(article.dek[locale]);
-  // og:/twitter: pinned to Russian — see the comment in app/layout.tsx.
-  const ogTitle = article.title.ru;
-  const ogDescription = truncateForDescription(article.dek.ru);
+  // title/description (incl. og:/twitter:, which inherit these) pinned to Russian —
+  // see the comment in app/layout.tsx.
+  const title = article.title.ru;
+  const description = truncateForDescription(article.dek.ru);
 
   return {
     title,
     description,
     alternates: { canonical: `/blog/${article.slug}` },
-    openGraph: { title: ogTitle, description: ogDescription, images: [article.coverImageUrl] },
+    openGraph: { title, description, images: [article.coverImageUrl] },
   };
 }
 

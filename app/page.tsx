@@ -9,12 +9,13 @@ import type { AttentionNoteRow } from "@/lib/types";
 export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
-  const t = getStrings(locale);
+  // title/description pinned to Russian — see the comment in app/layout.tsx (crawlers,
+  // including Yandex's, don't reliably send Accept-Language, so this is what search
+  // engines actually index).
+  const ru = getStrings("ru");
   return {
-    title: t.homeTitle,
-    description: t.homeSubtitle,
+    title: ru.homeTitle,
+    description: ru.homeSubtitle,
     alternates: { canonical: "/" },
     // No openGraph override here: the homepage share card should lead with the brand
     // name and what the service does ("PulseAiPro — ежедневный ИИ-дайджест…"), not the

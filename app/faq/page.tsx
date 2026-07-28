@@ -3,18 +3,12 @@ import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 import { faqPageJsonLd } from "@/lib/seo";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
-  const t = getStrings(locale);
-  const ru = getStrings("ru");
-  return {
-    title: t.faqTitle,
-    description: t.faqSubtitle,
-    alternates: { canonical: "/faq" },
-    openGraph: { title: ru.faqTitle, description: ru.faqSubtitle },
-  };
-}
+// title/description pinned to Russian — see the comment in app/layout.tsx.
+export const metadata: Metadata = {
+  title: getStrings("ru").faqTitle,
+  description: getStrings("ru").faqSubtitle,
+  alternates: { canonical: "/faq" },
+};
 
 export default async function FaqPage() {
   const headersList = await headers();

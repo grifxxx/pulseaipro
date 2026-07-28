@@ -16,22 +16,19 @@ type PageParams = { params: Promise<{ symbol: string }> };
 
 export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
   const { symbol } = await params;
-  const headersList = await headers();
-  const locale = resolveLocale(headersList.get("accept-language"));
   const notes = await getAssetHistory(symbol);
   if (notes.length === 0) return {};
 
   const latest = notes[0];
+  // description (incl. og:/twitter:) pinned to Russian — see the comment in app/layout.tsx.
   const title = `${latest.name} (${latest.ticker})`;
-  const description = truncateForDescription(latest.summary[locale]);
-  // og:/twitter: pinned to Russian — see the comment in app/layout.tsx.
-  const ogDescription = truncateForDescription(latest.summary.ru);
+  const description = truncateForDescription(latest.summary.ru);
 
   return {
     title,
     description,
     alternates: { canonical: `/asset/${encodeURIComponent(latest.ticker)}` },
-    openGraph: { title, description: ogDescription },
+    openGraph: { title, description },
   };
 }
 
