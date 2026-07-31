@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateRetrospectiveArticle } from "@/lib/pipeline/generate-retrospective-article";
+import { sendTelegramAlert } from "@/lib/notify";
 import type { RetrospectivePeriod } from "@/lib/types";
 
 export const maxDuration = 120;
@@ -30,9 +31,8 @@ export async function GET(req: NextRequest) {
     const result = await generateRetrospectiveArticle(period);
     return NextResponse.json({ ok: true, result });
   } catch (err) {
-    return NextResponse.json(
-      { ok: false, error: err instanceof Error ? err.message : String(err) },
-      { status: 500 }
-    );
+    const message = err instanceof Error ? err.message : String(err);
+    await sendTelegramAlert(`PulseAiPro: сбой генерации ретроспективы (${period})\n${message}`);
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }

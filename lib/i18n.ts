@@ -10,6 +10,7 @@ export function resolveLocale(acceptLanguage: string | null | undefined): Locale
 export function localizeNote(note: AttentionNoteRow, locale: Locale): DisplayAttentionNote {
   return {
     id: note.id,
+    assetId: note.assetId,
     ticker: note.ticker,
     name: note.name,
     category: note.category,
@@ -128,6 +129,21 @@ interface UIStrings {
   chartLoading: string;
   chartError: string;
   chartNoData: string;
+  navLogin: string;
+  navWatchlist: string;
+  logoutButton: string;
+  loginTitle: string;
+  loginSubtitle: string;
+  loginEmailPlaceholder: string;
+  loginButton: string;
+  loginSending: string;
+  loginSent: string;
+  loginError: string;
+  watchlistTitle: string;
+  watchlistSubtitle: string;
+  watchlistEmpty: string;
+  watchlistStarAdd: string;
+  watchlistStarRemove: string;
 }
 
 const STRINGS: Record<Locale, UIStrings> = {
@@ -269,6 +285,21 @@ const STRINGS: Record<Locale, UIStrings> = {
     chartLoading: "Загружаем график…",
     chartError: "Не удалось загрузить график.",
     chartNoData: "Недостаточно данных для графика.",
+    navLogin: "Войти",
+    navWatchlist: "Избранное",
+    logoutButton: "Выйти",
+    loginTitle: "Вход",
+    loginSubtitle: "Введите email — пришлём ссылку для входа, пароль не нужен.",
+    loginEmailPlaceholder: "you@example.com",
+    loginButton: "Получить ссылку",
+    loginSending: "Отправляем…",
+    loginSent: "Проверьте почту — мы отправили ссылку для входа.",
+    loginError: "Не удалось отправить письмо. Попробуйте ещё раз.",
+    watchlistTitle: "Избранное",
+    watchlistSubtitle: "Новости по активам, которые вы добавили в избранное.",
+    watchlistEmpty: "Пока пусто. Нажимайте на звёздочку у карточек активов, чтобы добавить их сюда.",
+    watchlistStarAdd: "Добавить в избранное",
+    watchlistStarRemove: "Убрать из избранного",
   },
   en: {
     siteTitle: "PulseAiPro",
@@ -404,6 +435,21 @@ const STRINGS: Record<Locale, UIStrings> = {
     chartLoading: "Loading chart…",
     chartError: "Couldn't load the chart.",
     chartNoData: "Not enough data for a chart.",
+    navLogin: "Sign in",
+    navWatchlist: "Watchlist",
+    logoutButton: "Sign out",
+    loginTitle: "Sign in",
+    loginSubtitle: "Enter your email — we'll send a sign-in link, no password needed.",
+    loginEmailPlaceholder: "you@example.com",
+    loginButton: "Send link",
+    loginSending: "Sending…",
+    loginSent: "Check your inbox — we've sent a sign-in link.",
+    loginError: "Couldn't send the email. Please try again.",
+    watchlistTitle: "Watchlist",
+    watchlistSubtitle: "News for the assets you've saved.",
+    watchlistEmpty: "Nothing here yet. Click the star on an asset card to add it.",
+    watchlistStarAdd: "Add to watchlist",
+    watchlistStarRemove: "Remove from watchlist",
   },
 };
 

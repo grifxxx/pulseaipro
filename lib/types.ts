@@ -70,6 +70,7 @@ export interface AttentionNote {
 /** A note with all Localized<T> fields resolved to a single display language. */
 export interface DisplayAttentionNote {
   id: string;
+  assetId: string;
   ticker: string;
   name: string;
   category: AssetType;

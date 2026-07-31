@@ -6,6 +6,7 @@ import "./globals.css";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PulseLogo } from "@/components/PulseLogo";
+import { AuthNav } from "@/components/AuthNav";
 import { YandexMetrika } from "@/components/YandexMetrika";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL, websiteJsonLd } from "@/lib/seo";
@@ -112,6 +113,7 @@ export default async function RootLayout({
             >
               {t.navAbout}
             </Link>
+            <AuthNav locale={locale} />
           </nav>
         </header>
         <main className="flex-1">{children}</main>

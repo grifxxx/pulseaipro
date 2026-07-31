@@ -9,6 +9,7 @@ import { SentimentBadge } from "@/components/SentimentBadge";
 import { SourceList } from "@/components/SourceList";
 import { AssetLogo } from "@/components/AssetLogo";
 import { PriceChart } from "@/components/PriceChart";
+import { WatchlistStar } from "@/components/WatchlistStar";
 
 const MARKET_DOT: Record<Market, string> = {
   us_stock: "bg-sky-500",
@@ -31,12 +32,15 @@ export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale
         <div className="flex min-w-0 items-start gap-2.5">
           <AssetLogo ticker={note.ticker} logoUrl={note.logoUrl} />
           <div className="min-w-0">
-            <Link
-              href={`/asset/${note.ticker}`}
-              className="font-semibold tracking-tight group-hover:text-accent transition-colors"
-            >
-              {note.name}
-            </Link>
+            <div className="flex items-center gap-1.5">
+              <Link
+                href={`/asset/${note.ticker}`}
+                className="font-semibold tracking-tight group-hover:text-accent transition-colors"
+              >
+                {note.name}
+              </Link>
+              <WatchlistStar assetId={note.assetId} locale={locale} />
+            </div>
             <div className="flex items-center gap-1.5 text-[11px] text-muted uppercase tracking-wide mt-0.5">
               <span className={`h-1.5 w-1.5 rounded-full ${MARKET_DOT[note.market]}`} />
               {note.ticker} · {marketLabel}

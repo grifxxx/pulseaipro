@@ -233,6 +233,27 @@ export const getLatestFeed = cache(async (): Promise<AttentionNoteRow[]> => {
   return latest;
 });
 
+/** Latest note per symbol, restricted to a given set of asset ids — powers the "Избранное" page. */
+export async function getLatestFeedForAssetIds(assetIds: string[]): Promise<AttentionNoteRow[]> {
+  if (assetIds.length === 0) return [];
+  const db = getPublicClient();
+  const { data, error } = await db
+    .from("attention_notes")
+    .select(NOTE_SELECT_WITH_ASSET)
+    .in("asset_id", assetIds)
+    .order("generated_at", { ascending: false });
+  if (error) throw new Error(`getLatestFeedForAssetIds failed: ${error.message}`);
+
+  const seen = new Set<string>();
+  const latest: AttentionNoteRow[] = [];
+  for (const row of data ?? []) {
+    if (seen.has(row.symbol)) continue;
+    seen.add(row.symbol);
+    latest.push(rowToAttentionNote(row));
+  }
+  return latest;
+}
+
 /** Cached per-request so generateMetadata and the page body share one DB call. */
 export const getAssetHistory = cache(async (symbol: string): Promise<AttentionNoteRow[]> => {
   const db = getPublicClient();
