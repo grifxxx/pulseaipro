@@ -42,3 +42,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# local-only data/secrets backups — never commit (contains real user data + API keys)
+/backups
