@@ -4,13 +4,23 @@ import type { RawNewsItem, WatchlistAsset } from "@/lib/types";
 const FEEDS: { url: string; publisher: string }[] = [
   { url: "https://www.coindesk.com/arc/outboundfeeds/rss/", publisher: "CoinDesk" },
   { url: "https://cointelegraph.com/rss", publisher: "Cointelegraph" },
+  { url: "https://decrypt.co/feed", publisher: "Decrypt" },
+  { url: "https://www.theblock.co/rss.xml", publisher: "The Block" },
+  { url: "https://cryptoslate.com/feed/", publisher: "CryptoSlate" },
+  { url: "https://www.newsbtc.com/feed/", publisher: "NewsBTC" },
   { url: "https://feeds.reuters.com/reuters/businessNews", publisher: "Reuters Business" },
   { url: "https://finance.yahoo.com/news/rssindex", publisher: "Yahoo Finance" },
   { url: "https://www.marketwatch.com/rss/topstories", publisher: "MarketWatch" },
+  { url: "https://www.cnbc.com/id/100003114/device/rss/rss.html", publisher: "CNBC" },
+  { url: "https://www.investing.com/rss/news.rss", publisher: "Investing.com" },
+  { url: "https://www.businessinsider.com/rss", publisher: "Business Insider" },
   // Russian-market coverage (for RU stocks) — all free, no key required.
   { url: "https://www.interfax.ru/rss.asp", publisher: "Interfax" },
   { url: "https://smart-lab.ru/news/rss/", publisher: "Smart-lab" },
   { url: "https://www.finam.ru/analysis/conews/rsspoint/", publisher: "Finam" },
+  { url: "https://rssexport.rbc.ru/rbcnews/news/30/full.rss", publisher: "РБК" },
+  { url: "https://www.vedomosti.ru/rss/news", publisher: "Ведомости" },
+  { url: "https://tass.ru/rss/v2.xml", publisher: "ТАСС" },
 ];
 
 const parser = new Parser();

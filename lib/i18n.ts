@@ -191,7 +191,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       "Котировки акций США и новости по компаниям — Finnhub",
       "Котировки российских акций — Московская биржа (MOEX ISS API)",
       "Котировки и трендовые монеты крипторынка — CoinGecko",
-      "Общие новости — RSS-ленты CoinDesk, Cointelegraph, Yahoo Finance, MarketWatch, Interfax, Smart-lab, Finam",
+      "Общие новости — RSS-ленты CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, РБК, Ведомости, ТАСС",
       "Синтез сводок — OpenAI, на основе только перечисленных источников",
     ],
     faqTitle: "Вопросы и ответы",
@@ -210,7 +210,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "Откуда берутся данные?",
         answer:
-          "Котировки акций США и новости по компаниям — из Finnhub. Котировки российских акций — с Московской биржи (MOEX). Крипта — из CoinGecko. Общие новости — из RSS-лент CoinDesk, Cointelegraph, Yahoo Finance, MarketWatch, Interfax, Smart-lab и Finam.",
+          "Котировки акций США и новости по компаниям — из Finnhub. Котировки российских акций — с Московской биржи (MOEX). Крипта — из CoinGecko. Общие новости — из 18 RSS-лент: CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, РБК, Ведомости и ТАСС.",
       },
       {
         question: "Как часто обновляется лента?",
@@ -317,7 +317,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       "US stock quotes and company news — Finnhub",
       "Russian stock quotes — Moscow Exchange (MOEX ISS API)",
       "Crypto prices and trending coins — CoinGecko",
-      "General news — RSS feeds from CoinDesk, Cointelegraph, Yahoo Finance, MarketWatch, Interfax, Smart-lab, Finam",
+      "General news — RSS feeds from CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, RBC, Vedomosti, TASS",
       "Note synthesis — OpenAI, based only on the sources listed above",
     ],
     faqTitle: "Frequently asked questions",
@@ -336,7 +336,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "Where does the data come from?",
         answer:
-          "US stock quotes and company news come from Finnhub. Russian stock quotes come from the Moscow Exchange (MOEX). Crypto data comes from CoinGecko. General news comes from RSS feeds: CoinDesk, Cointelegraph, Yahoo Finance, MarketWatch, Interfax, Smart-lab, and Finam.",
+          "US stock quotes and company news come from Finnhub. Russian stock quotes come from the Moscow Exchange (MOEX). Crypto data comes from CoinGecko. General news comes from 18 RSS feeds: CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, RBC, Vedomosti, and TASS.",
       },
       {
         question: "How often does the feed update?",
