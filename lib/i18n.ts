@@ -118,6 +118,16 @@ interface UIStrings {
   readArticle: string;
   backToBlog: string;
   publishedLabel: string;
+  chartShow: string;
+  chartHide: string;
+  chartRangeDay: string;
+  chartRangeWeek: string;
+  chartRangeMonth: string;
+  chartRangeYear: string;
+  chartRangeAll: string;
+  chartLoading: string;
+  chartError: string;
+  chartNoData: string;
 }
 
 const STRINGS: Record<Locale, UIStrings> = {
@@ -249,6 +259,16 @@ const STRINGS: Record<Locale, UIStrings> = {
     readArticle: "Читать статью",
     backToBlog: "← Назад к блогу",
     publishedLabel: "Опубликовано",
+    chartShow: "Показать график",
+    chartHide: "Скрыть график",
+    chartRangeDay: "День",
+    chartRangeWeek: "Неделя",
+    chartRangeMonth: "Месяц",
+    chartRangeYear: "Год",
+    chartRangeAll: "Всё время",
+    chartLoading: "Загружаем график…",
+    chartError: "Не удалось загрузить график.",
+    chartNoData: "Недостаточно данных для графика.",
   },
   en: {
     siteTitle: "PulseAiPro",
@@ -374,6 +394,16 @@ const STRINGS: Record<Locale, UIStrings> = {
     readArticle: "Read article",
     backToBlog: "← Back to blog",
     publishedLabel: "Published",
+    chartShow: "Show chart",
+    chartHide: "Hide chart",
+    chartRangeDay: "Day",
+    chartRangeWeek: "Week",
+    chartRangeMonth: "Month",
+    chartRangeYear: "Year",
+    chartRangeAll: "All time",
+    chartLoading: "Loading chart…",
+    chartError: "Couldn't load the chart.",
+    chartNoData: "Not enough data for a chart.",
   },
 };
 

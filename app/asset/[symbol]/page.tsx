@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { getAssetHistory } from "@/lib/db/queries";
 import { AssetCard } from "@/components/AssetCard";
+import { PriceChart } from "@/components/PriceChart";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
 import { assetArticleJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
@@ -65,6 +66,7 @@ export default async function AssetHistoryPage({ params }: PageParams) {
         {notes[0].name} <span className="text-muted font-normal">({notes[0].ticker})</span>
       </h1>
       <p className="text-sm text-muted">{t.historySubtitle}</p>
+      <PriceChart ticker={latest.ticker} market={latest.market} locale={locale} />
       <div className="flex flex-col gap-4 mt-2">
         {notes.map((note, i) => (
           <Fragment key={note.id}>

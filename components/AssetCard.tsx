@@ -1,9 +1,14 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import type { DisplayAttentionNote, Locale, Market } from "@/lib/types";
 import { getStrings } from "@/lib/i18n";
+import { CURRENCY_SYMBOL } from "@/lib/format";
 import { SentimentBadge } from "@/components/SentimentBadge";
 import { SourceList } from "@/components/SourceList";
 import { AssetLogo } from "@/components/AssetLogo";
+import { PriceChart } from "@/components/PriceChart";
 
 const MARKET_DOT: Record<Market, string> = {
   us_stock: "bg-sky-500",
@@ -11,13 +16,9 @@ const MARKET_DOT: Record<Market, string> = {
   crypto: "bg-orange-500",
 };
 
-const CURRENCY_SYMBOL: Record<string, string> = {
-  USD: "$",
-  RUB: "₽",
-};
-
 export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale: Locale }) {
   const t = getStrings(locale);
+  const [showChart, setShowChart] = useState(false);
   const changePct = note.priceSnapshot?.changePct24h;
   const isUp = changePct != null && changePct >= 0;
   const marketLabel =
@@ -82,6 +83,15 @@ export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale
         <span className="font-medium text-foreground/70">{t.risksLabel}: </span>
         {note.riskNotes}
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowChart((v) => !v)}
+        className="w-fit text-xs font-medium text-accent hover:opacity-80 transition-opacity"
+      >
+        {showChart ? `− ${t.chartHide}` : `+ ${t.chartShow}`}
+      </button>
+      {showChart && <PriceChart ticker={note.ticker} market={note.market} locale={locale} />}
 
       <SourceList sources={note.sources} />
 
