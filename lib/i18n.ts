@@ -241,7 +241,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "Как часто обновляется лента?",
         answer:
-          "Автоматически раз в день по расписанию. Владелец сервиса также может запустить обновление вручную в любой момент.",
+          "Автоматически три раза в день по расписанию — утром, днём и вечером. Статьи в блоге выходят раз в сутки, вечером, когда собраны новости за весь день. Владелец сервиса также может запустить обновление вручную в любой момент.",
       },
       {
         question: "Что значит «бычий», «медвежий», «смешанный» и «нейтральный» настрой?",
@@ -259,6 +259,16 @@ const STRINGS: Record<Locale, UIStrings> = {
           "В строке поиска можно ввести тикер или название актива. Вкладками сверху лента делится на акции США, акции РФ и крипту. Чипсы настроения позволяют оставить только, например, «бычьи» активы, а сортировка — упорядочить по изменению цены, новизне или алфавиту.",
       },
       {
+        question: "Откуда графики цены на карточках и как ими пользоваться?",
+        answer:
+          "На каждой карточке есть кнопка «Показать график» — она открывает интерактивный график цены актива с возможностью переключать период: день, неделя, месяц, год или всё время. При наведении показывается точная цена на выбранный момент. Данные берутся напрямую с бирж: Yahoo Finance для акций США, Московская биржа (MOEX) для российских акций, CoinGecko для криптовалют. Для крипты история ограничена одним годом — это ограничение бесплатного тарифа CoinGecko, не наше.",
+      },
+      {
+        question: "Что такое «Избранное» и как войти в аккаунт?",
+        answer:
+          "Нажмите «Войти» в шапке сайта и введите email — мы пришлём ссылку для входа, пароль не нужен. После входа на каждой карточке появляется звёздочка ★: нажмите на неё, чтобы добавить актив в избранное. Раздел «Избранное» в шапке показывает ленту только по сохранённым вами активам. Список активов и email хранятся только для этой функции и никуда не передаются, кроме сервиса Supabase, который технически обеспечивает вход (см. Политику конфиденциальности).",
+      },
+      {
         question: "Планируется ли Telegram-бот?",
         answer:
           "Да, в планах — бот, который будет присылать те же сводки в Telegram на основе той же базы данных.",
@@ -266,7 +276,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "Можно ли добавить новый актив в отслеживание?",
         answer:
-          "Список активов сейчас фиксированный и настраивается владельцем сервиса на стороне сервера. Расширение списка — в планах.",
+          "Да. Если ввести в поиске тикер или название актива, которого ещё нет в ленте, появится кнопка «Искать актив» — сервис соберёт по нему свежие новости и котировки и добавит его в постоянное отслеживание, так что дальше он будет обновляться вместе со всеми остальными.",
       },
     ],
     blogTitle: "Блог",
@@ -392,7 +402,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "How often does the feed update?",
         answer:
-          "Automatically once a day on a schedule. The site owner can also trigger an update manually at any time.",
+          "Automatically three times a day — morning, afternoon, and evening. Blog articles publish once a day, in the evening, once the day's news has been gathered. The site owner can also trigger an update manually at any time.",
       },
       {
         question: "What do \"bullish\", \"bearish\", \"mixed\" and \"neutral\" mean?",
@@ -410,13 +420,23 @@ const STRINGS: Record<Locale, UIStrings> = {
           "The search box matches by ticker or asset name. Tabs at the top split the feed into US stocks, RU stocks, and crypto. Sentiment chips let you narrow down to, say, only \"bullish\" assets, and sort lets you order by price change, recency, or alphabetically.",
       },
       {
+        question: "Where do the price charts on each card come from, and how do I use them?",
+        answer:
+          "Every card has a \"Show chart\" button that opens an interactive price chart with switchable ranges: day, week, month, year, or all time. Hover over the chart to see the exact price at a given moment. Data comes straight from the exchanges: Yahoo Finance for US stocks, the Moscow Exchange (MOEX) for Russian stocks, and CoinGecko for crypto. Crypto history is capped at one year — that's a limit of CoinGecko's free tier, not something we impose.",
+      },
+      {
+        question: "What is the watchlist, and how do I sign in?",
+        answer:
+          "Click \"Sign in\" in the header and enter your email — we'll send a sign-in link, no password required. Once signed in, a star (★) appears on every card: click it to save that asset. The \"Watchlist\" section in the header then shows a feed limited to the assets you've saved. Your email and saved list are only used for this feature and aren't shared beyond Supabase, which handles sign-in technically (see the Privacy Policy).",
+      },
+      {
         question: "Is a Telegram bot planned?",
         answer: "Yes — a bot that sends the same notes to Telegram, reading from the same database, is planned.",
       },
       {
         question: "Can I add a new asset to track?",
         answer:
-          "The watchlist is currently fixed and configured server-side by the site owner. Expanding it is on the roadmap.",
+          "Yes. Searching for a ticker or name that isn't in the feed yet shows a \"Look up asset\" button — the service gathers fresh news and quotes for it and adds it to permanent tracking, so it keeps updating alongside everything else from then on.",
       },
     ],
     blogTitle: "Blog",
