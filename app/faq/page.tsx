@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 import { faqPageJsonLd } from "@/lib/seo";
 
-// title/description pinned to Russian — see the comment in app/layout.tsx.
+// SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
+// separately from the on-page heading so the <title> tag carries real search keywords.
 export const metadata: Metadata = {
-  title: getStrings("ru").faqTitle,
+  title: "Вопросы и ответы — новости акций и криптовалют",
   description: getStrings("ru").faqSubtitle,
   alternates: { canonical: "/faq" },
 };

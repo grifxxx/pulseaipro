@@ -15,13 +15,21 @@ function monogramStyle(ticker: string): string {
   return MONOGRAM_STYLES[hash % MONOGRAM_STYLES.length];
 }
 
-export function AssetLogo({ ticker, logoUrl }: { ticker: string; logoUrl: string | null }) {
+export function AssetLogo({
+  ticker,
+  name,
+  logoUrl,
+}: {
+  ticker: string;
+  name?: string;
+  logoUrl: string | null;
+}) {
   if (logoUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={logoUrl}
-        alt=""
+        alt={`${name ?? ticker} — логотип`}
         width={36}
         height={36}
         className="h-9 w-9 shrink-0 rounded-full bg-white object-contain p-1 ring-1 ring-border"

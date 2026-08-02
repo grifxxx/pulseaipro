@@ -9,18 +9,13 @@ import type { AttentionNoteRow } from "@/lib/types";
 export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
-  // title/description pinned to Russian — see the comment in app/layout.tsx (crawlers,
-  // including Yandex's, don't reliably send Accept-Language, so this is what search
-  // engines actually index).
-  const ru = getStrings("ru");
   return {
-    title: ru.homeTitle,
-    description: ru.homeSubtitle,
     alternates: { canonical: "/" },
-    // No openGraph override here: the homepage share card should lead with the brand
-    // name and what the service does ("PulseAiPro — ежедневный ИИ-дайджест…"), not the
-    // page's on-site heading ("Сегодня в центре внимания") — so it inherits the
-    // branded default from app/layout.tsx instead of shadowing it.
+    // No title/description/openGraph override here: the homepage's SEO title should lead
+    // with the brand name and the keyword-rich phrase "ежедневный ИИ-дайджест новостей по
+    // акциям и крипте" (not the page's on-site heading "Сегодня в центре внимания", which
+    // has no search-relevant keywords) — so it inherits the branded, keyword-rich default
+    // from app/layout.tsx instead of shadowing it with a weaker title.
   };
 }
 

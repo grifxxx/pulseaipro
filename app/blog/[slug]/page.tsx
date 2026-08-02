@@ -6,7 +6,7 @@ import { getArticleBySlug } from "@/lib/db/articles-queries";
 import { ArticleBody } from "@/components/ArticleBody";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
-import { blogPostingJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
+import { blogPostingJsonLd, breadcrumbJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
 import { SPONSOR_OFFERS, offerForKey } from "@/lib/sponsors";
 
 export const revalidate = 0;
@@ -50,12 +50,21 @@ export default async function ArticlePage({ params }: PageParams) {
     datePublished: display.publishedAt,
     url: `${SITE_URL}/blog/${display.slug}`,
   });
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: t.navFeed, url: SITE_URL },
+    { name: t.navBlog, url: `${SITE_URL}/blog` },
+    { name: display.title, url: `${SITE_URL}/blog/${display.slug}` },
+  ]);
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-5">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <Link href="/blog" className="text-sm text-muted hover:text-accent transition-colors w-fit">
         {t.backToBlog}
@@ -64,7 +73,7 @@ export default async function ArticlePage({ params }: PageParams) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={display.coverImageUrl}
-        alt=""
+        alt={display.title}
         className="w-full rounded-2xl border border-border object-cover max-h-96"
       />
 

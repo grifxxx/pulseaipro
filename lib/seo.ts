@@ -20,7 +20,27 @@ export function websiteJsonLd() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      "Daily AI-generated summaries of what's moving stocks and crypto in the news — informational only, not investment advice.",
+      "Ежедневные ИИ-сводки новостей по акциям США, российским акциям и криптовалютам — информационный контент, не инвестиционная рекомендация.",
+  };
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+/** BreadcrumbList structured data — lets search results (incl. Yandex) show a breadcrumb path
+ * instead of a raw URL, and signals page hierarchy for indexing. */
+export function breadcrumbJsonLd(items: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: item.url,
+    })),
   };
 }
 

@@ -2,9 +2,11 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 
-// title/description pinned to Russian — see the comment in app/layout.tsx.
+// SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
+// separately from the on-page heading (aboutTitle) so the <title> tag can carry real search
+// keywords ("акции", "крипта", "новости") instead of the generic on-site "О проекте".
 export const metadata: Metadata = {
-  title: getStrings("ru").aboutTitle,
+  title: "О проекте — ИИ-дайджест новостей акций и криптовалют",
   description: getStrings("ru").aboutIntro,
   alternates: { canonical: "/about" },
 };

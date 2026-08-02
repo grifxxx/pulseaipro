@@ -16,7 +16,7 @@ export function AssetWidget({ ticker, name, logoUrl, price, changePct, currency 
       href={`/asset/${encodeURIComponent(ticker)}`}
       className="group flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 transition-colors hover:border-accent/40"
     >
-      <AssetLogo ticker={ticker} logoUrl={logoUrl} />
+      <AssetLogo ticker={ticker} name={name} logoUrl={logoUrl} />
       <div className="min-w-0 flex-1">
         <div className="font-medium text-sm truncate group-hover:text-accent transition-colors">{name}</div>
         <div className="text-[11px] text-muted uppercase tracking-wide">{ticker}</div>

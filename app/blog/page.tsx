@@ -13,9 +13,10 @@ export const revalidate = 0;
 const PAGE_SIZE = 9;
 const SPONSOR_EVERY_N = 6;
 
-// title/description pinned to Russian — see the comment in app/layout.tsx.
+// SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
+// separately from the on-page heading so the <title> tag carries real search keywords.
 export const metadata: Metadata = {
-  title: getStrings("ru").blogTitle,
+  title: "Блог о рынке акций и криптовалют — статьи и обзоры",
   description: getStrings("ru").blogSubtitle,
   alternates: { canonical: "/blog" },
 };

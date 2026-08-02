@@ -1,10 +1,14 @@
 import type { Article, AttentionNoteRow, DisplayArticle, DisplayAttentionNote, Locale } from "@/lib/types";
 
-/** Picks ru/en from an Accept-Language header value, defaulting to en. */
+/** Picks ru/en from an Accept-Language header value. Defaults to ru, not en: real browsers
+ * always send Accept-Language (so genuine English visitors still get "en" correctly), but
+ * crawlers — including YandexBot — often send none at all. Since the primary audience and
+ * SEO target is Russian, an absent/unrecognized header should render Russian content, not
+ * English, so what gets indexed matches the site's actual market. */
 export function resolveLocale(acceptLanguage: string | null | undefined): Locale {
-  if (!acceptLanguage) return "en";
+  if (!acceptLanguage) return "ru";
   const first = acceptLanguage.split(",")[0]?.trim().toLowerCase() ?? "";
-  return first.startsWith("ru") ? "ru" : "en";
+  return first.startsWith("en") ? "en" : "ru";
 }
 
 export function localizeNote(note: AttentionNoteRow, locale: Locale): DisplayAttentionNote {
@@ -156,10 +160,10 @@ const STRINGS: Record<Locale, UIStrings> = {
     disclaimer:
       "Информационный контент, сгенерированный ИИ на основе новостей. Это не инвестиционная рекомендация и не призыв покупать или продавать активы. Всегда проводите собственный анализ.",
     footerNote: "PulseAiPro — информационный проект. Не инвестиционная рекомендация.",
-    liveBadge: "Обновляется ежедневно",
-    homeTitle: "Сегодня в центре внимания",
+    liveBadge: "Обновляется несколько раз в день",
+    homeTitle: "Акции и криптовалюты в центре внимания сегодня",
     homeSubtitle:
-      "Активы, о которых сейчас пишут новости — с кратким разбором и ссылками на источники.",
+      "Акции США, российские акции и криптовалюты, о которых сейчас пишут новости — с кратким ИИ-разбором и ссылками на источники.",
     loadErrorPrefix: "Не удалось загрузить ленту",
     loadErrorSuffix:
       "Проверьте, что заданы переменные окружения Supabase и что миграция БД выполнена.",
@@ -208,7 +212,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     resultsCount: (n) => `${n} ${n === 1 ? "актив" : n < 5 ? "актива" : "активов"}`,
     aboutTitle: "О проекте",
     aboutIntro:
-      "Этот сайт раз в день автоматически собирает новости и рыночные данные по фиксированному списку акций (США и России) и криптовалют, после чего ИИ-модель формирует краткую сводку: что произошло, почему это может быть интересно, какие есть риски и на какие источники это опирается.",
+      "Этот сайт три раза в день автоматически собирает новости и рыночные данные по акциям (США и России) и криптовалютам, после чего ИИ-модель формирует краткую сводку: что произошло, почему это может быть интересно, какие есть риски и на какие источники это опирается. Список активов не фиксирован — любой новый актив можно найти через поиск, и он добавится в постоянное отслеживание.",
     aboutNotAdviceTitle: "Это не инвестиционная рекомендация",
     aboutNotAdviceBody:
       "Материалы на сайте носят исключительно информационный и образовательный характер. Мы не являемся лицензированным инвестиционным советником и не даём указаний покупать, продавать или удерживать какие-либо активы. Модель прямо проинструктирована не формулировать такие призывы. Любые решения о сделках с активами — исключительно ваша ответственность; перед принятием решений проводите собственный анализ и при необходимости консультируйтесь с лицензированным специалистом.",
@@ -226,7 +230,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "Что такое PulseAiPro?",
         answer:
-          "PulseAiPro — сервис, который раз в день автоматически собирает новости и рыночные данные по акциям США, российским акциям и криптовалютам, а затем с помощью ИИ готовит краткую сводку по каждому заметному активу: что произошло и почему это важно.",
+          "PulseAiPro — сервис, который три раза в день автоматически собирает новости и рыночные данные по акциям США, российским акциям и криптовалютам, а затем с помощью ИИ готовит краткую сводку по каждому заметному активу: что произошло и почему это важно.",
       },
       {
         question: "Это инвестиционная рекомендация?",
@@ -320,7 +324,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     disclaimer:
       "AI-generated informational content based on news coverage. This is not investment advice and not a recommendation to buy or sell any asset. Always do your own research.",
     footerNote: "PulseAiPro is an informational project. Not investment advice.",
-    liveBadge: "Updated daily",
+    liveBadge: "Updated several times a day",
     homeTitle: "Notable today",
     homeSubtitle: "Assets currently in the news — with a short breakdown and source links.",
     loadErrorPrefix: "Couldn't load the feed",
@@ -369,7 +373,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     resultsCount: (n) => `${n} asset${n === 1 ? "" : "s"}`,
     aboutTitle: "About",
     aboutIntro:
-      "This site automatically gathers news and market data once a day for a fixed watchlist of US stocks, Russian stocks, and cryptocurrencies, then an AI model produces a short note: what happened, why it might be interesting, what the risks are, and which sources it's based on.",
+      "This site automatically gathers news and market data three times a day for US stocks, Russian stocks, and cryptocurrencies, then an AI model produces a short note: what happened, why it might be interesting, what the risks are, and which sources it's based on. The tracked list isn't fixed — searching for any new asset adds it to permanent tracking.",
     aboutNotAdviceTitle: "This is not investment advice",
     aboutNotAdviceBody:
       "Content on this site is informational and educational only. We are not a licensed investment advisor and do not instruct anyone to buy, sell, or hold any asset. The model is explicitly instructed not to phrase things that way. Any decisions about trading assets are entirely your own responsibility — do your own research and consult a licensed professional where appropriate.",
@@ -387,7 +391,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       {
         question: "What is PulseAiPro?",
         answer:
-          "PulseAiPro automatically gathers news and market data once a day for US stocks, Russian stocks, and cryptocurrencies, then uses AI to produce a short note per notable asset: what happened and why it matters.",
+          "PulseAiPro automatically gathers news and market data three times a day for US stocks, Russian stocks, and cryptocurrencies, then uses AI to produce a short note per notable asset: what happened and why it matters.",
       },
       {
         question: "Is this investment advice?",

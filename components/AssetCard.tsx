@@ -30,7 +30,7 @@ export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale
     <article className="group flex min-w-0 flex-col gap-3.5 rounded-2xl border border-border bg-surface p-5 transition-all hover:border-accent/40 hover:shadow-lg hover:shadow-black/[0.03] dark:hover:shadow-black/20">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-start gap-2.5">
-          <AssetLogo ticker={note.ticker} logoUrl={note.logoUrl} />
+          <AssetLogo ticker={note.ticker} name={note.name} logoUrl={note.logoUrl} />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <Link

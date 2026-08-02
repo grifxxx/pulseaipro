@@ -6,7 +6,7 @@ import { AssetCard } from "@/components/AssetCard";
 import { PriceChart } from "@/components/PriceChart";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
-import { assetArticleJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
+import { assetArticleJsonLd, breadcrumbJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
 import { offerForKey } from "@/lib/sponsors";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -52,12 +52,20 @@ export default async function AssetHistoryPage({ params }: PageParams) {
     datePublished: latest.generatedAt,
     url: `${SITE_URL}/asset/${encodeURIComponent(latest.ticker)}`,
   });
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: t.navFeed, url: SITE_URL },
+    { name: `${latest.name} (${latest.ticker})`, url: `${SITE_URL}/asset/${encodeURIComponent(latest.ticker)}` },
+  ]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-4">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <Link href="/" className="text-sm text-muted hover:text-accent transition-colors w-fit">
         {t.backToFeed}

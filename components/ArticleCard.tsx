@@ -37,7 +37,7 @@ export function ArticleCard({ article, locale }: { article: DisplayArticle; loca
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={article.coverImageUrl}
-          alt=""
+          alt={article.title}
           className="h-44 w-full object-cover bg-surface-hover"
         />
       </Link>
