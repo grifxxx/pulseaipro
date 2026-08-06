@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
 import { submitToIndexNow } from "@/lib/indexnow";
+import { postArticleToChannel } from "@/lib/notify";
 import { SITE_URL } from "@/lib/seo";
 import type { Article, ArticleBlock, ArticleKind, Market, RetrospectivePeriod } from "@/lib/types";
 
@@ -36,11 +37,20 @@ export async function insertArticle(article: NewArticle): Promise<void> {
   );
   if (error) throw new Error(`insertArticle failed: ${error.message}`);
 
-  await submitToIndexNow([
-    `${SITE_URL}/blog/${encodeURIComponent(article.slug)}`,
-    `${SITE_URL}/blog`,
-    `${SITE_URL}/sitemap.xml`,
-  ]);
+  const url = `${SITE_URL}/blog/${encodeURIComponent(article.slug)}`;
+  await submitToIndexNow([url, `${SITE_URL}/blog`, `${SITE_URL}/sitemap.xml`]);
+
+  // Sponsored articles are disclosed ad placements — post those to the channel manually and
+  // deliberately, not automatically, same as they're already excluded from the Zen RSS feed.
+  if ((article.kind ?? "daily") !== "sponsored") {
+    await postArticleToChannel({
+      market: article.market ?? null,
+      title: article.title.ru,
+      dek: article.dek.ru,
+      url,
+      coverImageUrl: article.coverImageUrl,
+    });
+  }
 }
 
 function rowToArticle(r: Record<string, unknown>): Article {
