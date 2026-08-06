@@ -23,6 +23,9 @@ export async function submitToIndexNow(urls: string[]): Promise<void> {
         keyLocation: `${SITE_URL}/${INDEXNOW_KEY}.txt`,
         urlList,
       }),
+      // A hung Yandex response must not stall the caller — pipeline/cron routes await this and
+      // have their own maxDuration budget to protect (a hang here previously caused a 504).
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
       console.error(`submitToIndexNow: ${res.status} ${await res.text().catch(() => "")}`);
