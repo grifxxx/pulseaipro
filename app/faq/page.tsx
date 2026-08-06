@@ -4,10 +4,12 @@ import { resolveLocale, getStrings } from "@/lib/i18n";
 import { faqPageJsonLd } from "@/lib/seo";
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
-// separately from the on-page heading so the <title> tag carries real search keywords.
+// separately from the on-page heading/subtitle so the search snippet can be clear and
+// keyword-rich without cluttering the on-site copy.
 export const metadata: Metadata = {
-  title: "Вопросы и ответы — новости акций и криптовалют",
-  description: getStrings("ru").faqSubtitle,
+  title: "Часто задаваемые вопросы — сервис новостей акций и крипты",
+  description:
+    "Ответы на частые вопросы о PulseAiPro: как устроен сервис, откуда данные, как часто обновляется лента, как пользоваться поиском, графиками цены и избранным.",
   alternates: { canonical: "/faq" },
 };
 

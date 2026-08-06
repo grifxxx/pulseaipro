@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
-// separately from the on-page heading (aboutTitle) so the <title> tag can carry real search
-// keywords ("акции", "крипта", "новости") instead of the generic on-site "О проекте".
+// separately from the on-page heading/intro so the search snippet can be clear and
+// keyword-rich without cluttering the on-site copy.
 export const metadata: Metadata = {
-  title: "О проекте — ИИ-дайджест новостей акций и криптовалют",
-  description: getStrings("ru").aboutIntro,
+  title: "Как работает PulseAiPro — сервис новостей акций и крипты",
+  description:
+    "PulseAiPro три раза в день собирает новости и рыночные данные по акциям США, российским акциям и криптовалютам, а ИИ готовит короткую сводку: что произошло, почему это важно и какие есть риски.",
   alternates: { canonical: "/about" },
 };
 

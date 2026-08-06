@@ -14,10 +14,12 @@ const PAGE_SIZE = 9;
 const SPONSOR_EVERY_N = 6;
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
-// separately from the on-page heading so the <title> tag carries real search keywords.
+// separately from the on-page heading/subtitle so the search snippet can be clear and
+// keyword-rich without cluttering the on-site copy.
 export const metadata: Metadata = {
-  title: "Блог о рынке акций и криптовалют — статьи и обзоры",
-  description: getStrings("ru").blogSubtitle,
+  title: "Блог: новости и обзоры рынка акций и криптовалют",
+  description:
+    "Ежедневные статьи по акциям США, российским акциям и криптовалютам — с обложкой, графиком и разбором ключевых активов дня. Публикуются автоматически на основе новостей.",
   alternates: { canonical: "/blog" },
 };
 
