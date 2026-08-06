@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticleBySlug } from "@/lib/db/articles-queries";
 import { ArticleBody } from "@/components/ArticleBody";
+import { ShareButtons } from "@/components/ShareButtons";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
 import { blogPostingJsonLd, breadcrumbJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
@@ -87,8 +88,11 @@ export default async function ArticlePage({ params }: PageParams) {
         )}
         <h1 className="text-3xl font-bold tracking-tight">{display.title}</h1>
         <p className="text-base text-muted">{display.dek}</p>
-        <div className="text-xs text-muted/70">
-          {t.publishedLabel}: {new Date(display.publishedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-xs text-muted/70">
+            {t.publishedLabel}: {new Date(display.publishedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
+          </div>
+          <ShareButtons url={`${SITE_URL}/blog/${display.slug}`} title={display.title} label={t.shareLabel} />
         </div>
       </div>
 

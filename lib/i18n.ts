@@ -123,6 +123,7 @@ interface UIStrings {
   readArticle: string;
   backToBlog: string;
   publishedLabel: string;
+  shareLabel: string;
   chartShow: string;
   chartHide: string;
   chartRangeDay: string;
@@ -289,6 +290,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     readArticle: "Читать статью",
     backToBlog: "← Назад к блогу",
     publishedLabel: "Опубликовано",
+    shareLabel: "Поделиться",
     chartShow: "Показать график",
     chartHide: "Скрыть график",
     chartRangeDay: "День",
@@ -449,6 +451,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     readArticle: "Read article",
     backToBlog: "← Back to blog",
     publishedLabel: "Published",
+    shareLabel: "Share",
     chartShow: "Show chart",
     chartHide: "Hide chart",
     chartRangeDay: "Day",
