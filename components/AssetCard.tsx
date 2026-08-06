@@ -9,7 +9,9 @@ import { SentimentBadge } from "@/components/SentimentBadge";
 import { SourceList } from "@/components/SourceList";
 import { AssetLogo } from "@/components/AssetLogo";
 import { PriceChart } from "@/components/PriceChart";
+import { ShareButtons } from "@/components/ShareButtons";
 import { WatchlistStar } from "@/components/WatchlistStar";
+import { SITE_URL } from "@/lib/seo";
 
 const MARKET_DOT: Record<Market, string> = {
   us_stock: "bg-sky-500",
@@ -99,8 +101,15 @@ export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale
 
       <SourceList sources={note.sources} />
 
-      <div className="text-[11px] text-muted/70">
-        {t.updatedLabel}: {new Date(note.generatedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="text-[11px] text-muted/70">
+          {t.updatedLabel}: {new Date(note.generatedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
+        </div>
+        <ShareButtons
+          url={`${SITE_URL}/asset/${note.ticker}`}
+          title={`${note.name} (${note.ticker}): ${note.summary}`}
+          label={t.shareLabel}
+        />
       </div>
     </article>
   );
