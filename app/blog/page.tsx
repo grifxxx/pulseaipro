@@ -10,7 +10,9 @@ import type { Article } from "@/lib/types";
 
 export const revalidate = 0;
 
-const PAGE_SIZE = 9;
+// 11 articles + 1 sponsor card (inserted after the 6th) = 12 cells, which fills the 3-column
+// grid to exactly 4 full rows instead of leaving a near-empty trailing row.
+const PAGE_SIZE = 11;
 const SPONSOR_EVERY_N = 6;
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
