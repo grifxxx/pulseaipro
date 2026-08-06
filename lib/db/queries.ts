@@ -1,5 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
+import { submitToIndexNow } from "@/lib/indexnow";
+import { SITE_URL } from "@/lib/seo";
 import type {
   AttentionNote,
   AttentionNoteRow,
@@ -177,6 +179,16 @@ export async function insertAttentionNotes(
   }));
   const { error } = await db.from("attention_notes").insert(rows);
   if (error) throw new Error(`insertAttentionNotes failed: ${error.message}`);
+
+  const tickers = [...new Set(entries.map((e) => e.note.ticker))];
+  // Awaited (not fire-and-forget): the serverless function returns as soon as its caller stops
+  // awaiting, which can kill an in-flight request before it completes.
+  await submitToIndexNow([
+    SITE_URL,
+    `${SITE_URL}/sitemap.xml`,
+    ...tickers.map((t) => `${SITE_URL}/asset/${encodeURIComponent(t)}`),
+  ]);
+
   return rows.length;
 }
 

@@ -1,5 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
+import { submitToIndexNow } from "@/lib/indexnow";
+import { SITE_URL } from "@/lib/seo";
 import type { Article, ArticleBlock, ArticleKind, Market, RetrospectivePeriod } from "@/lib/types";
 
 export interface NewArticle {
@@ -33,6 +35,12 @@ export async function insertArticle(article: NewArticle): Promise<void> {
     { onConflict: "slug" }
   );
   if (error) throw new Error(`insertArticle failed: ${error.message}`);
+
+  await submitToIndexNow([
+    `${SITE_URL}/blog/${encodeURIComponent(article.slug)}`,
+    `${SITE_URL}/blog`,
+    `${SITE_URL}/sitemap.xml`,
+  ]);
 }
 
 function rowToArticle(r: Record<string, unknown>): Article {
