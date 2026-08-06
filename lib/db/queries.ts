@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
 import { submitToIndexNow } from "@/lib/indexnow";
+import { postNotableNotesToChannel } from "@/lib/notify";
 import { SITE_URL } from "@/lib/seo";
 import type {
   AttentionNote,
@@ -188,6 +189,17 @@ export async function insertAttentionNotes(
     `${SITE_URL}/sitemap.xml`,
     ...tickers.map((t) => `${SITE_URL}/asset/${encodeURIComponent(t)}`),
   ]);
+
+  await postNotableNotesToChannel(
+    entries.map(({ note }) => ({
+      ticker: note.ticker,
+      name: note.name,
+      sentiment: note.sentiment,
+      sentimentScore: note.sentimentScore,
+      summary: note.summary.ru,
+      url: `${SITE_URL}/asset/${encodeURIComponent(note.ticker)}`,
+    }))
+  );
 
   return rows.length;
 }

@@ -79,3 +79,61 @@ export async function postArticleToChannel(article: ChannelArticle): Promise<voi
     console.error("postArticleToChannel: request failed", err instanceof Error ? err.message : err);
   }
 }
+
+const SENTIMENT_EMOJI: Record<string, string> = {
+  bullish: "📈",
+  bearish: "📉",
+  mixed: "🔀",
+  neutral: "➖",
+};
+
+// A single pipeline run can produce 30-40 notes; posting all of them would flood the channel.
+// Only notes with a strong sentiment signal are "notable" enough to post.
+const NOTABLE_SENTIMENT_THRESHOLD = 0.5;
+// Sequential with a delay, not Promise.all — Telegram throttles bursts to the same chat.
+const CHANNEL_POST_DELAY_MS = 1200;
+
+export interface ChannelNote {
+  ticker: string;
+  name: string;
+  sentiment: string;
+  sentimentScore: number;
+  summary: string;
+  url: string;
+}
+
+async function postSingleNoteToChannel(note: ChannelNote): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHANNEL_CHAT_ID;
+  if (!token || !chatId) return;
+
+  const emoji = SENTIMENT_EMOJI[note.sentiment] ?? "📊";
+  const text = `${emoji} <b>${escapeHtml(note.name)} (${escapeHtml(note.ticker)})</b>\n\n${escapeHtml(
+    truncate(note.summary, 600)
+  )}\n\n${note.url}`;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      console.error(`postSingleNoteToChannel: Telegram API returned ${res.status}: ${await res.text().catch(() => "")}`);
+    }
+  } catch (err) {
+    console.error("postSingleNoteToChannel: request failed", err instanceof Error ? err.message : err);
+  }
+}
+
+/** Posts only the notable subset (|sentimentScore| >= 0.5) of a pipeline run's notes to the
+ * channel, spaced out to respect Telegram's per-chat rate limit. Best-effort per note — one
+ * failed/slow send never blocks the rest. */
+export async function postNotableNotesToChannel(notes: ChannelNote[]): Promise<void> {
+  const notable = notes.filter((n) => Math.abs(n.sentimentScore) >= NOTABLE_SENTIMENT_THRESHOLD);
+  for (const note of notable) {
+    await postSingleNoteToChannel(note);
+    await new Promise((resolve) => setTimeout(resolve, CHANNEL_POST_DELAY_MS));
+  }
+}
