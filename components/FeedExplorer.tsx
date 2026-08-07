@@ -16,7 +16,9 @@ type SortBy = "newest" | "changeDesc" | "changeAsc" | "alpha";
 type LookupState = "idle" | "loading" | "not_found" | "no_news" | "rate_limited";
 
 const SENTIMENTS: Sentiment[] = ["bullish", "bearish", "mixed", "neutral"];
-const PAGE_SIZE = 12;
+// 13 notes + 2 sponsor cards (inserted after the 6th and 12th) = 15 cells, filling the 3-column
+// grid to exactly 5 full rows instead of stranding a near-empty trailing row.
+const PAGE_SIZE = 13;
 
 export function FeedExplorer({ notes, locale }: { notes: DisplayAttentionNote[]; locale: Locale }) {
   const t = getStrings(locale);
