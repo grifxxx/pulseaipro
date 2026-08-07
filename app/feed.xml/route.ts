@@ -26,6 +26,10 @@ function enclosureFor(url: string, bytes: number | null): RssItem["enclosure"] |
   return type ? { url, length: bytes, type } : undefined;
 }
 
+function sourceLinkHtml(link: string): string {
+  return `<p>Источник: <a href="${escapeXml(link)}">${SITE_NAME}</a></p>`;
+}
+
 function articleBlockToHtml(block: ArticleBlock): string {
   switch (block.type) {
     case "heading":
@@ -52,7 +56,7 @@ function articleToItem(article: Article): RssItem {
   const bodyHtml = article.body.map(articleBlockToHtml).join("\n");
   const contentHtml = `<figure><img src="${escapeXml(article.coverImageUrl)}" alt="${escapeXml(
     article.title.ru
-  )}" /></figure>\n<p>${escapeXml(article.dek.ru)}</p>\n${bodyHtml}`;
+  )}" /></figure>\n<p>${escapeXml(article.dek.ru)}</p>\n${bodyHtml}\n${sourceLinkHtml(link)}`;
 
   return {
     title: article.title.ru,
@@ -80,6 +84,7 @@ function noteToItem(note: AttentionNoteRow): RssItem {
     `<p><strong>Почему это важно:</strong> ${escapeXml(whyNotable)}</p>`,
     factsHtml,
     riskNotes ? `<p><em>Риски: ${escapeXml(riskNotes)}</em></p>` : "",
+    sourceLinkHtml(link),
   ]
     .filter(Boolean)
     .join("\n");
