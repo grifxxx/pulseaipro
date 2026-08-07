@@ -8,6 +8,7 @@ import {
   createPipelineRun,
   ensureAsset,
   finishPipelineRun,
+  getLatestFeed,
   getWatchlistBySource,
   insertAttentionNotes,
   updateAssetLogo,
@@ -35,6 +36,18 @@ function dedupeAssets(assets: WatchlistAsset[]): WatchlistAsset[] {
 
 function bundleKey(symbol: string, assetType: string): string {
   return `${assetType}:${symbol.toLowerCase()}`;
+}
+
+/** News sources (e.g. Finnhub) return a rolling multi-day window, so the same article keeps
+ * showing up for days after it broke — without this, the LLM re-flags the same old story as
+ * notable on every run. Only news published after the asset's last note is worth re-analyzing. */
+function dropAlreadyCoveredNews(bundles: AssetBundle[], lastNoteAtByTicker: Map<string, string>): AssetBundle[] {
+  return bundles.map((b) => {
+    const lastNoteAt = lastNoteAtByTicker.get(b.asset.symbol);
+    if (!lastNoteAt) return b;
+    const cutoff = new Date(lastNoteAt).getTime();
+    return { ...b, news: b.news.filter((n) => new Date(n.publishedAt).getTime() > cutoff) };
+  });
 }
 
 /** Best-effort logo enrichment: only hits the network for assets that don't have a cached logo yet. */
@@ -124,7 +137,11 @@ export async function runPipeline(): Promise<PipelineResult> {
 
     const bundleByKey = new Map(bundles.map((b) => [bundleKey(b.asset.symbol, b.asset.assetType), b]));
 
-    const notes = await analyzeAssetBundles(bundles);
+    const latestFeed = await getLatestFeed();
+    const lastNoteAtByTicker = new Map(latestFeed.map((n) => [n.ticker, n.generatedAt]));
+    const freshBundles = dropAlreadyCoveredNews(bundles, lastNoteAtByTicker);
+
+    const notes = await analyzeAssetBundles(freshBundles);
 
     const entries = await Promise.all(
       notes.map(async (note: AttentionNote) => {
