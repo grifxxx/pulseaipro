@@ -13,6 +13,10 @@ const badgeClass =
 export function ShareButtons({ url, title, label }: ShareButtonsProps) {
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
+  // MAX's share intent only takes one "text" field (no separate url param), so the caption has
+  // to be composed with the link at the end ourselves — otherwise it shares a bare link with no
+  // caption at all, which just falls back to MAX's own auto-preview sitting above nothing.
+  const encodedMaxText = encodeURIComponent(`${title}\n\n${url}`);
 
   return (
     <div className="flex items-center gap-2">
@@ -40,7 +44,7 @@ export function ShareButtons({ url, title, label }: ShareButtonsProps) {
         <span className="text-[11px] font-bold tracking-tight">VK</span>
       </a>
       <a
-        href={`https://max.ru/:share?text=${encodedUrl}`}
+        href={`https://max.ru/:share?text=${encodedMaxText}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="MAX"
