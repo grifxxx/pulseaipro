@@ -6,7 +6,7 @@ const BUCKET = "article-images";
 export async function uploadArticleImage(
   path: string,
   bytes: Buffer,
-  contentType = "image/webp"
+  contentType = "image/jpeg"
 ): Promise<string> {
   const db = getServiceClient();
   const { error } = await db.storage.from(BUCKET).upload(path, bytes, {

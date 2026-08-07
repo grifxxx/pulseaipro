@@ -42,7 +42,7 @@ async function generateOneMarketArticle(
   const slug = `${todaySlugDate()}-${market.replace(/_/g, "-")}`;
 
   const coverBytes = await generateCoverImage(draft.coverImagePrompt);
-  const coverImageUrl = await uploadArticleImage(`covers/${slug}.webp`, coverBytes);
+  const coverImageUrl = await uploadArticleImage(`covers/${slug}.jpg`, coverBytes);
 
   const chartUrl = buildChangeChartUrl(
     draft.sections.map((s) => ({
@@ -89,6 +89,7 @@ async function generateOneMarketArticle(
     dek: draft.dek,
     body,
     coverImageUrl,
+    coverImageBytes: coverBytes.length,
     relatedTickers: draft.sections.map((s) => s.ticker),
   });
 

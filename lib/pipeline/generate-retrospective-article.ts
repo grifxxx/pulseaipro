@@ -106,7 +106,7 @@ export async function generateRetrospectiveArticle(
   const slug = `${period}-review-${dateStamp}`;
 
   const coverBytes = await generateCoverImage(draft.coverImagePrompt);
-  const coverImageUrl = await uploadArticleImage(`covers/${slug}.webp`, coverBytes);
+  const coverImageUrl = await uploadArticleImage(`covers/${slug}.jpg`, coverBytes);
 
   const chartUrl = buildChangeChartUrl(
     draft.sections.map((s) => ({
@@ -158,6 +158,7 @@ export async function generateRetrospectiveArticle(
     dek: draft.dek,
     body,
     coverImageUrl,
+    coverImageBytes: coverBytes.length,
     relatedTickers: draft.sections.map((s) => s.ticker),
   });
 

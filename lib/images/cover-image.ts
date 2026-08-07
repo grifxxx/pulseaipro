@@ -2,7 +2,8 @@ import { getOpenAIClient } from "@/lib/llm/openai-client";
 
 const COVER_IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-2";
 
-/** Generates an article cover image and returns the raw bytes (webp). GPT image models always return base64. */
+/** Generates an article cover image and returns the raw bytes (jpeg — Yandex Dzen's RSS
+ * <enclosure> only accepts JPEG/GIF/PNG, not webp). GPT image models always return base64. */
 export async function generateCoverImage(prompt: string): Promise<Buffer> {
   const client = getOpenAIClient();
   const response = await client.images.generate({
@@ -10,7 +11,7 @@ export async function generateCoverImage(prompt: string): Promise<Buffer> {
     prompt,
     size: "1536x1024",
     quality: "medium",
-    output_format: "webp",
+    output_format: "jpeg",
     n: 1,
   });
 

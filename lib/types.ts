@@ -125,6 +125,9 @@ export interface Article {
   title: Localized<string>;
   dek: Localized<string>;
   coverImageUrl: string;
+  /** Byte size of the cover image file — required by Yandex Dzen's RSS <enclosure> tag. Null for
+   * articles published before this was tracked. */
+  coverImageBytes: number | null;
   body: ArticleBlock[];
   relatedTickers: string[];
   publishedAt: string;

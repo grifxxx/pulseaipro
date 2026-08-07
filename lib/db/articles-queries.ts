@@ -14,6 +14,7 @@ export interface NewArticle {
   dek: Article["dek"];
   body: ArticleBlock[];
   coverImageUrl: string;
+  coverImageBytes?: number;
   relatedTickers: string[];
 }
 
@@ -30,6 +31,7 @@ export async function insertArticle(article: NewArticle): Promise<void> {
       dek: article.dek,
       body: article.body,
       cover_image_url: article.coverImageUrl,
+      cover_image_bytes: article.coverImageBytes ?? null,
       related_tickers: article.relatedTickers,
       published_at: new Date().toISOString(),
     },
@@ -63,6 +65,7 @@ function rowToArticle(r: Record<string, unknown>): Article {
     title: r.title as Article["title"],
     dek: r.dek as Article["dek"],
     coverImageUrl: r.cover_image_url as string,
+    coverImageBytes: (r.cover_image_bytes as number | null) ?? null,
     body: r.body as ArticleBlock[],
     relatedTickers: (r.related_tickers as string[]) ?? [],
     publishedAt: r.published_at as string,

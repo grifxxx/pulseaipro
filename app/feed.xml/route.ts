@@ -10,6 +10,22 @@ const MAX_ARTICLE_ITEMS = 60;
 const NOTE_WINDOW_DAYS = 14;
 const NOTE_PER_DAY_LIMIT = 5;
 
+const MARKET_CATEGORY: Record<string, string> = {
+  us_stock: "Акции США",
+  ru_stock: "Акции РФ",
+  crypto: "Криптовалюты",
+};
+
+/** Dzen's <enclosure> only accepts JPEG/GIF/PNG — articles published before the switch away from
+ * webp have no byte-length on file and get no enclosure (they still show inline images in the
+ * body via content:encoded). */
+function enclosureFor(url: string, bytes: number | null): RssItem["enclosure"] | undefined {
+  if (bytes == null) return undefined;
+  const ext = url.split(".").pop()?.toLowerCase();
+  const type = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : ext === "png" ? "image/png" : ext === "gif" ? "image/gif" : null;
+  return type ? { url, length: bytes, type } : undefined;
+}
+
 function articleBlockToHtml(block: ArticleBlock): string {
   switch (block.type) {
     case "heading":
@@ -44,6 +60,8 @@ function articleToItem(article: Article): RssItem {
     guid: `pulseaipro-article-${article.id}`,
     pubDate: toRfc822(article.publishedAt),
     contentHtml,
+    category: article.market ? MARKET_CATEGORY[article.market] ?? "Финансы" : "Обзоры рынка",
+    enclosure: enclosureFor(article.coverImageUrl, article.coverImageBytes),
   };
 }
 
@@ -74,6 +92,7 @@ function noteToItem(note: AttentionNoteRow): RssItem {
     guid: `pulseaipro-note-${note.id}`,
     pubDate: toRfc822(note.generatedAt),
     contentHtml,
+    category: MARKET_CATEGORY[note.market] ?? "Финансы",
   };
 }
 

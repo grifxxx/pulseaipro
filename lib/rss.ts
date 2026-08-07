@@ -24,6 +24,9 @@ export interface RssItem {
   guid: string;
   pubDate: string;
   contentHtml: string;
+  category?: string;
+  /** Cover image for Yandex Dzen's <enclosure> tag — Dzen only supports JPEG/GIF/PNG. */
+  enclosure?: { url: string; length: number; type: string };
 }
 
 export interface RssChannel {
@@ -36,15 +39,19 @@ export interface RssChannel {
 
 export function buildRssFeed(channel: RssChannel): string {
   const itemsXml = channel.items
-    .map(
-      (item) => `  <item>
+    .map((item) => {
+      const categoryXml = item.category ? `\n    <category>${escapeXml(item.category)}</category>` : "";
+      const enclosureXml = item.enclosure
+        ? `\n    <enclosure url="${escapeXml(item.enclosure.url)}" length="${item.enclosure.length}" type="${item.enclosure.type}"/>`
+        : "";
+      return `  <item>
     <title>${escapeXml(item.title)}</title>
     <link>${escapeXml(item.link)}</link>
     <guid isPermaLink="false">${escapeXml(item.guid)}</guid>
-    <pubDate>${item.pubDate}</pubDate>
+    <pubDate>${item.pubDate}</pubDate>${categoryXml}${enclosureXml}
     <content:encoded>${cdata(item.contentHtml)}</content:encoded>
-  </item>`
-    )
+  </item>`;
+    })
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
