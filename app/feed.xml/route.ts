@@ -1,5 +1,5 @@
 import { getLatestArticles } from "@/lib/db/articles-queries";
-import { getRecentNotesForFeed } from "@/lib/db/queries";
+import { getSignificantNotesForFeed } from "@/lib/db/queries";
 import { buildRssFeed, escapeXml, toRfc822, type RssItem } from "@/lib/rss";
 import { SITE_NAME, SITE_URL, truncateForDescription } from "@/lib/seo";
 import type { Article, ArticleBlock, AttentionNoteRow } from "@/lib/types";
@@ -7,7 +7,8 @@ import type { Article, ArticleBlock, AttentionNoteRow } from "@/lib/types";
 export const revalidate = 0;
 
 const MAX_ARTICLE_ITEMS = 60;
-const MAX_NOTE_ITEMS = 150;
+const NOTE_WINDOW_DAYS = 14;
+const NOTE_PER_DAY_LIMIT = 5;
 
 function articleBlockToHtml(block: ArticleBlock): string {
   switch (block.type) {
@@ -79,7 +80,7 @@ function noteToItem(note: AttentionNoteRow): RssItem {
 export async function GET() {
   const [articles, notes] = await Promise.all([
     getLatestArticles(),
-    getRecentNotesForFeed(MAX_NOTE_ITEMS),
+    getSignificantNotesForFeed(NOTE_WINDOW_DAYS, NOTE_PER_DAY_LIMIT),
   ]);
 
   const items = [
@@ -94,7 +95,7 @@ export async function GET() {
     title: SITE_NAME,
     link: SITE_URL,
     description:
-      "PulseAiPro — автоматические новостные сводки и статьи по акциям США, российским акциям и криптовалютам. Информационный контент, не инвестиционная рекомендация.",
+      "PulseAiPro — автоматические статьи и самые значимые новости по акциям США, российским акциям и криптовалютам. Информационный контент, не инвестиционная рекомендация.",
     language: "ru",
     items,
   });

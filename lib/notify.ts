@@ -88,8 +88,9 @@ const SENTIMENT_EMOJI: Record<string, string> = {
 };
 
 // A single pipeline run can produce 30-40 notes; posting all of them would flood the channel.
-// Only notes with a strong sentiment signal are "notable" enough to post.
-const NOTABLE_SENTIMENT_THRESHOLD = 0.5;
+// Only notes with a strong sentiment signal are "notable" enough to post. Also reused by the
+// Zen RSS feed (lib/db/queries.ts) so both surfaces agree on what counts as significant.
+export const NOTABLE_SENTIMENT_THRESHOLD = 0.5;
 // Sequential with a delay, not Promise.all — Telegram throttles bursts to the same chat.
 const CHANNEL_POST_DELAY_MS = 1200;
 
