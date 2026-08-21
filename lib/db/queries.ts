@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
 import { submitToIndexNow } from "@/lib/indexnow";
-import { postNotableNotesToChannel, NOTABLE_SENTIMENT_THRESHOLD } from "@/lib/notify";
+import { postNotableNotesToChannel, notifyWatchlistUsers, NOTABLE_SENTIMENT_THRESHOLD } from "@/lib/notify";
 import { SITE_URL } from "@/lib/seo";
 import type {
   AttentionNote,
@@ -201,7 +201,57 @@ export async function insertAttentionNotes(
     }))
   );
 
+  const assetIds = [...new Set(entries.map((e) => e.assetId))];
+  const chatIdsByAsset = await getWatchlistChatIdsByAsset(assetIds);
+  if (chatIdsByAsset.size > 0) {
+    await notifyWatchlistUsers(
+      entries.flatMap(({ note, assetId }) =>
+        (chatIdsByAsset.get(assetId) ?? []).map((chatId) => ({
+          chatId,
+          ticker: note.ticker,
+          name: note.name,
+          sentiment: note.sentiment,
+          summary: note.summary.ru,
+          url: `${SITE_URL}/asset/${encodeURIComponent(note.ticker)}`,
+        }))
+      )
+    );
+  }
+
   return rows.length;
+}
+
+/** Maps each asset id to the Telegram chat_ids of users who have it in "Избранное" AND have
+ * linked Telegram — two queries rather than a nested select, since user_watchlist and
+ * telegram_links both reference auth.users but aren't FK-linked to each other. */
+async function getWatchlistChatIdsByAsset(assetIds: string[]): Promise<Map<string, number[]>> {
+  if (assetIds.length === 0) return new Map();
+  const db = getServiceClient();
+
+  const { data: watchRows, error: watchError } = await db
+    .from("user_watchlist")
+    .select("asset_id, user_id")
+    .in("asset_id", assetIds);
+  if (watchError) throw new Error(`getWatchlistChatIdsByAsset failed: ${watchError.message}`);
+  if (!watchRows || watchRows.length === 0) return new Map();
+
+  const userIds = [...new Set(watchRows.map((r) => r.user_id as string))];
+  const { data: linkRows, error: linkError } = await db
+    .from("telegram_links")
+    .select("user_id, chat_id")
+    .in("user_id", userIds);
+  if (linkError) throw new Error(`getWatchlistChatIdsByAsset failed: ${linkError.message}`);
+
+  const chatIdByUser = new Map((linkRows ?? []).map((r) => [r.user_id as string, r.chat_id as number]));
+
+  const map = new Map<string, number[]>();
+  for (const row of watchRows) {
+    const chatId = chatIdByUser.get(row.user_id as string);
+    if (chatId == null) continue;
+    const assetId = row.asset_id as string;
+    map.set(assetId, [...(map.get(assetId) ?? []), chatId]);
+  }
+  return map;
 }
 
 interface AssetJoin {

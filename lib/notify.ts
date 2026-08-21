@@ -138,3 +138,51 @@ export async function postNotableNotesToChannel(notes: ChannelNote[]): Promise<v
     await new Promise((resolve) => setTimeout(resolve, CHANNEL_POST_DELAY_MS));
   }
 }
+
+// Different chat_ids aren't subject to Telegram's per-chat throttling as strictly as the
+// channel is, but a small delay keeps a big watchlist-notify burst well under the global
+// ~30 msg/sec limit.
+const WATCHLIST_NOTIFY_DELAY_MS = 400;
+
+export interface WatchlistNotification {
+  chatId: number;
+  ticker: string;
+  name: string;
+  sentiment: string;
+  summary: string;
+  url: string;
+}
+
+async function sendWatchlistNotification(n: WatchlistNotification): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return;
+
+  const emoji = SENTIMENT_EMOJI[n.sentiment] ?? "📊";
+  const text = `${emoji} <b>${escapeHtml(n.name)} (${escapeHtml(n.ticker)})</b>\n\n${escapeHtml(
+    truncate(n.summary, 600)
+  )}\n\n${n.url}`;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: n.chatId, text, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      console.error(`sendWatchlistNotification: Telegram API returned ${res.status}: ${await res.text().catch(() => "")}`);
+    }
+  } catch (err) {
+    console.error("sendWatchlistNotification: request failed", err instanceof Error ? err.message : err);
+  }
+}
+
+/** DMs every user who has this asset in their "Избранное" watchlist and has linked Telegram —
+ * unlike the public channel, there's no sentiment threshold here: the user chose this specific
+ * ticker, so every note about it is relevant to them. Best-effort per recipient. */
+export async function notifyWatchlistUsers(notifications: WatchlistNotification[]): Promise<void> {
+  for (const n of notifications) {
+    await sendWatchlistNotification(n);
+    await new Promise((resolve) => setTimeout(resolve, WATCHLIST_NOTIFY_DELAY_MS));
+  }
+}

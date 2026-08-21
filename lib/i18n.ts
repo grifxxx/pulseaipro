@@ -148,6 +148,11 @@ interface UIStrings {
   watchlistTitle: string;
   watchlistSubtitle: string;
   watchlistEmpty: string;
+  telegramConnectTitle: string;
+  telegramConnectDesc: string;
+  telegramConnectButton: string;
+  telegramConnectedLabel: string;
+  telegramDisconnectButton: string;
   watchlistStarAdd: string;
   watchlistStarRemove: string;
 }
@@ -316,6 +321,11 @@ const STRINGS: Record<Locale, UIStrings> = {
     watchlistTitle: "Избранное",
     watchlistSubtitle: "Новости по активам, которые вы добавили в избранное.",
     watchlistEmpty: "Пока пусто. Нажимайте на звёздочку у карточек активов, чтобы добавить их сюда.",
+    telegramConnectTitle: "Уведомления в Telegram",
+    telegramConnectDesc: "Получайте сообщение в Telegram, как только выходит новость по активу из избранного.",
+    telegramConnectButton: "Подключить Telegram",
+    telegramConnectedLabel: "✓ Подключено",
+    telegramDisconnectButton: "Отключить",
     watchlistStarAdd: "Добавить в избранное",
     watchlistStarRemove: "Убрать из избранного",
   },
@@ -478,6 +488,11 @@ const STRINGS: Record<Locale, UIStrings> = {
     watchlistTitle: "Watchlist",
     watchlistSubtitle: "News for the assets you've saved.",
     watchlistEmpty: "Nothing here yet. Click the star on an asset card to add it.",
+    telegramConnectTitle: "Telegram notifications",
+    telegramConnectDesc: "Get a Telegram message as soon as a note is published for an asset in your watchlist.",
+    telegramConnectButton: "Connect Telegram",
+    telegramConnectedLabel: "✓ Connected",
+    telegramDisconnectButton: "Disconnect",
     watchlistStarAdd: "Add to watchlist",
     watchlistStarRemove: "Remove from watchlist",
   },

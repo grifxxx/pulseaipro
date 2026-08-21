@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getServerAuthClient } from "@/lib/db/supabase-server";
 import { getLatestFeedForAssetIds } from "@/lib/db/queries";
 import { AssetCard } from "@/components/AssetCard";
+import { TelegramLinkButton } from "@/components/TelegramLinkButton";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
 
 export const revalidate = 0;
@@ -35,6 +36,8 @@ export default async function WatchlistPage() {
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.watchlistTitle}</h1>
         <p className="text-sm sm:text-base text-muted max-w-xl">{t.watchlistSubtitle}</p>
       </div>
+
+      <TelegramLinkButton locale={locale} />
 
       {localizedNotes.length === 0 ? (
         <div className="rounded-xl border border-border bg-surface text-sm p-6 text-muted">
