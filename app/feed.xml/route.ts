@@ -64,7 +64,12 @@ function articleToItem(article: Article): RssItem {
     guid: `pulseaipro-article-${article.id}`,
     pubDate: toRfc822(article.publishedAt),
     contentHtml,
-    category: article.market ? MARKET_CATEGORY[article.market] ?? "Финансы" : "Обзоры рынка",
+    category:
+      article.kind === "humor"
+        ? "С иронией"
+        : article.market
+          ? MARKET_CATEGORY[article.market] ?? "Финансы"
+          : "Обзоры рынка",
     enclosure: enclosureFor(article.coverImageUrl, article.coverImageBytes),
   };
 }

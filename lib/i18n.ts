@@ -92,6 +92,7 @@ interface UIStrings {
   usStockLabel: string;
   ruStockLabel: string;
   periodLabel: Record<"weekly" | "monthly" | "semiannual" | "yearly", string>;
+  humorLabel: string;
   backToFeed: string;
   historySubtitle: string;
   sentiment: Record<"bullish" | "bearish" | "neutral" | "mixed", string>;
@@ -190,6 +191,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       semiannual: "Итоги полугодия",
       yearly: "Итоги года",
     },
+    humorLabel: "С иронией",
     backToFeed: "← Назад к ленте",
     historySubtitle: "История записей за всё время, от новых к старым.",
     sentiment: {
@@ -352,6 +354,7 @@ const STRINGS: Record<Locale, UIStrings> = {
       semiannual: "6-month review",
       yearly: "Yearly review",
     },
+    humorLabel: "Satire",
     backToFeed: "← Back to feed",
     historySubtitle: "Full history, newest first.",
     sentiment: {

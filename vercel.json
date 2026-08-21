@@ -14,7 +14,11 @@
     },
     {
       "path": "/api/cron/generate-articles",
-      "schedule": "0 19 * * *"
+      "schedule": "30 5 * * *"
+    },
+    {
+      "path": "/api/cron/generate-humor-article",
+      "schedule": "30 7 * * *"
     },
     {
       "path": "/api/cron/generate-retrospective?period=weekly",

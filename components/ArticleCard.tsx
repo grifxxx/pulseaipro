@@ -9,21 +9,25 @@ const MARKET_DOT: Record<Market, string> = {
 };
 
 const PERIOD_DOT = "bg-pink-500";
+const HUMOR_DOT = "bg-fuchsia-500";
 
 export function ArticleCard({ article, locale }: { article: DisplayArticle; locale: Locale }) {
   const t = getStrings(locale);
   const isSponsored = article.kind === "sponsored";
 
   const badgeLabel =
-    article.kind === "retrospective" && article.period
-      ? t.periodLabel[article.period]
-      : article.market === "us_stock"
-        ? t.usStockLabel
-        : article.market === "ru_stock"
-          ? t.ruStockLabel
-          : t.cryptoLabel;
+    article.kind === "humor"
+      ? t.humorLabel
+      : article.kind === "retrospective" && article.period
+        ? t.periodLabel[article.period]
+        : article.market === "us_stock"
+          ? t.usStockLabel
+          : article.market === "ru_stock"
+            ? t.ruStockLabel
+            : t.cryptoLabel;
 
-  const badgeDot = article.kind === "retrospective" ? PERIOD_DOT : MARKET_DOT[article.market ?? "us_stock"];
+  const badgeDot =
+    article.kind === "humor" ? HUMOR_DOT : article.kind === "retrospective" ? PERIOD_DOT : MARKET_DOT[article.market ?? "us_stock"];
 
   return (
     <article
