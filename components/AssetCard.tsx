@@ -11,6 +11,7 @@ import { AssetLogo } from "@/components/AssetLogo";
 import { PriceChart } from "@/components/PriceChart";
 import { ShareButtons } from "@/components/ShareButtons";
 import { WatchlistStar } from "@/components/WatchlistStar";
+import { AddToPortfolioButton } from "@/components/AddToPortfolioButton";
 import { SITE_URL } from "@/lib/seo";
 
 const MARKET_DOT: Record<Market, string> = {
@@ -42,6 +43,7 @@ export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale
                 {note.name}
               </Link>
               <WatchlistStar assetId={note.assetId} locale={locale} />
+              <AddToPortfolioButton assetId={note.assetId} locale={locale} />
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-muted uppercase tracking-wide mt-0.5">
               <span className={`h-1.5 w-1.5 rounded-full ${MARKET_DOT[note.market]}`} />

@@ -432,6 +432,48 @@ export const getAssetHistory = cache(async (symbol: string): Promise<AttentionNo
   return (data ?? []).map(rowToAttentionNote);
 });
 
+export interface AssetHistoryPage {
+  notes: AttentionNoteRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+/** Paginated version of getAssetHistory — some heavily-covered tickers accumulate hundreds of
+ * notes over time, which made the asset page an ever-growing single-scroll list. Clamps the
+ * requested page to a valid range, same as getArticlesPage. */
+export const getAssetHistoryPage = cache(
+  async (symbol: string, page: number, pageSize: number): Promise<AssetHistoryPage> => {
+    const db = getPublicClient();
+
+    const { count, error: countError } = await db
+      .from("attention_notes")
+      .select("id", { count: "exact", head: true })
+      .eq("symbol", symbol);
+    if (countError) throw new Error(`getAssetHistoryPage failed: ${countError.message}`);
+
+    const totalCount = count ?? 0;
+    if (totalCount === 0) {
+      return { notes: [], totalCount: 0, page: 1, pageSize };
+    }
+
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const clampedPage = Math.min(Math.max(1, page), totalPages);
+    const from = (clampedPage - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error } = await db
+      .from("attention_notes")
+      .select(NOTE_SELECT_WITH_ASSET)
+      .eq("symbol", symbol)
+      .order("generated_at", { ascending: false })
+      .range(from, to);
+    if (error) throw new Error(`getAssetHistoryPage failed: ${error.message}`);
+
+    return { notes: (data ?? []).map(rowToAttentionNote), totalCount, page: clampedPage, pageSize };
+  }
+);
+
 /** All notes (every market, every symbol — not deduped) published within a date range, for retrospectives. */
 export async function getNotesInRange(fromISO: string, toISO: string): Promise<AttentionNoteRow[]> {
   const db = getServiceClient();

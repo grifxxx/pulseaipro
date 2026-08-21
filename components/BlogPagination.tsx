@@ -16,11 +16,19 @@ function getPageNumbers(current: number, total: number): (number | "ellipsis")[]
   return result;
 }
 
-function pageHref(page: number): string {
-  return page <= 1 ? "/blog" : `/blog?page=${page}`;
+function pageHref(basePath: string, page: number): string {
+  return page <= 1 ? basePath : `${basePath}?page=${page}`;
 }
 
-export function BlogPagination({ currentPage, totalPages }: { currentPage: number; totalPages: number }) {
+export function BlogPagination({
+  currentPage,
+  totalPages,
+  basePath = "/blog",
+}: {
+  currentPage: number;
+  totalPages: number;
+  basePath?: string;
+}) {
   if (totalPages <= 1) return null;
   const pages = getPageNumbers(currentPage, totalPages);
 
@@ -28,7 +36,7 @@ export function BlogPagination({ currentPage, totalPages }: { currentPage: numbe
     <nav className="flex items-center justify-center gap-1.5 pt-2">
       {currentPage > 1 ? (
         <Link
-          href={pageHref(currentPage - 1)}
+          href={pageHref(basePath, currentPage - 1)}
           className="rounded-full px-3 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground"
         >
           ←
@@ -44,7 +52,7 @@ export function BlogPagination({ currentPage, totalPages }: { currentPage: numbe
         ) : (
           <Link
             key={p}
-            href={pageHref(p)}
+            href={pageHref(basePath, p)}
             className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
               p === currentPage
                 ? "bg-accent text-white"
@@ -57,7 +65,7 @@ export function BlogPagination({ currentPage, totalPages }: { currentPage: numbe
       )}
       {currentPage < totalPages ? (
         <Link
-          href={pageHref(currentPage + 1)}
+          href={pageHref(basePath, currentPage + 1)}
           className="rounded-full px-3 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground"
         >
           →

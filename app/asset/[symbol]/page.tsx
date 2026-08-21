@@ -1,8 +1,9 @@
 import { Fragment } from "react";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
-import { getAssetHistory } from "@/lib/db/queries";
+import { getAssetHistoryPage } from "@/lib/db/queries";
 import { AssetCard } from "@/components/AssetCard";
+import { BlogPagination } from "@/components/BlogPagination";
 import { PriceChart } from "@/components/PriceChart";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
@@ -13,11 +14,16 @@ import { notFound } from "next/navigation";
 
 export const revalidate = 0;
 
-type PageParams = { params: Promise<{ symbol: string }> };
+const PAGE_SIZE = 10;
+
+type PageParams = {
+  params: Promise<{ symbol: string }>;
+  searchParams: Promise<{ page?: string }>;
+};
 
 export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
   const { symbol } = await params;
-  const notes = await getAssetHistory(symbol);
+  const { notes } = await getAssetHistoryPage(symbol, 1, 1);
   if (notes.length === 0) return {};
 
   const latest = notes[0];
@@ -33,17 +39,23 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
   };
 }
 
-export default async function AssetHistoryPage({ params }: PageParams) {
+export default async function AssetHistoryPage({ params, searchParams }: PageParams) {
   const { symbol } = await params;
+  const { page: pageParam } = await searchParams;
+  const requestedPage = Math.max(1, Number(pageParam) || 1);
+
   const headersList = await headers();
   const locale = resolveLocale(headersList.get("accept-language"));
   const t = getStrings(locale);
 
-  const notes = await getAssetHistory(symbol);
+  // Separate from the page's own notes: the chart/JSON-LD/breadcrumbs must always reflect the
+  // single most recent note, regardless of which history page is being viewed.
+  const { notes: latestNotes } = await getAssetHistoryPage(symbol, 1, 1);
+  if (latestNotes.length === 0) notFound();
+  const latest = latestNotes[0];
 
-  if (notes.length === 0) notFound();
-
-  const latest = notes[0];
+  const { notes, totalCount, page } = await getAssetHistoryPage(symbol, requestedPage, PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const jsonLd = assetArticleJsonLd({
     ticker: latest.ticker,
     name: latest.name,
@@ -71,7 +83,7 @@ export default async function AssetHistoryPage({ params }: PageParams) {
         {t.backToFeed}
       </Link>
       <h1 className="text-3xl font-bold tracking-tight">
-        {notes[0].name} <span className="text-muted font-normal">({notes[0].ticker})</span>
+        {latest.name} <span className="text-muted font-normal">({latest.ticker})</span>
       </h1>
       <p className="text-sm text-muted">{t.historySubtitle}</p>
       <PriceChart ticker={latest.ticker} market={latest.market} locale={locale} />
@@ -79,10 +91,11 @@ export default async function AssetHistoryPage({ params }: PageParams) {
         {notes.map((note, i) => (
           <Fragment key={note.id}>
             <AssetCard note={localizeNote(note, locale)} locale={locale} />
-            {i === 0 && locale === "ru" && <SponsorCard offer={offerForKey(latest.ticker)} />}
+            {page === 1 && i === 0 && locale === "ru" && <SponsorCard offer={offerForKey(latest.ticker)} />}
           </Fragment>
         ))}
       </div>
+      <BlogPagination currentPage={page} totalPages={totalPages} basePath={`/asset/${symbol}`} />
     </div>
   );
 }
