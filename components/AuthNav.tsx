@@ -48,6 +48,9 @@ export function AuthNav({ locale }: { locale: Locale }) {
       <Link href="/watchlist" className={linkClass}>
         {t.navWatchlist}
       </Link>
+      <Link href="/portfolio" className={linkClass}>
+        {t.navPortfolio}
+      </Link>
       <button type="button" onClick={signOut} title={email} className={`${linkClass} text-muted`}>
         {t.logoutButton}
       </button>

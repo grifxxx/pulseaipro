@@ -5,6 +5,7 @@ import { getRussianStockQuotes } from "@/lib/datasources/moex";
 import { fetchAllFeeds, groupFeedByAsset } from "@/lib/datasources/rss";
 import { analyzeAssetBundles } from "@/lib/llm/analyze";
 import {
+  checkPriceAlerts,
   createPipelineRun,
   ensureAsset,
   finishPipelineRun,
@@ -12,6 +13,7 @@ import {
   getWatchlistBySource,
   insertAttentionNotes,
   updateAssetLogo,
+  type PriceAlertCandidate,
   type WatchlistAssetRow,
 } from "@/lib/db/queries";
 import type { AssetBundle, AttentionNote, PriceSnapshot, WatchlistAsset } from "@/lib/types";
@@ -160,6 +162,14 @@ export async function runPipeline(): Promise<PipelineResult> {
     );
 
     const notesCreated = await insertAttentionNotes(runId, entries);
+
+    const priceAlertCandidates: PriceAlertCandidate[] = bundles.flatMap((b) => {
+      if (!b.price) return [];
+      const row = assetRowByKey.get(bundleKey(b.asset.symbol, b.asset.assetType));
+      if (!row) return [];
+      return [{ assetId: row.id, ticker: b.asset.symbol, name: b.asset.name, price: b.price }];
+    });
+    await checkPriceAlerts(priceAlertCandidates);
 
     await finishPipelineRun(runId, {
       status: "success",

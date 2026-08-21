@@ -1,7 +1,12 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
 import { submitToIndexNow } from "@/lib/indexnow";
-import { postNotableNotesToChannel, notifyWatchlistUsers, NOTABLE_SENTIMENT_THRESHOLD } from "@/lib/notify";
+import {
+  postNotableNotesToChannel,
+  notifyWatchlistUsers,
+  sendPriceAlerts,
+  NOTABLE_SENTIMENT_THRESHOLD,
+} from "@/lib/notify";
 import { SITE_URL } from "@/lib/seo";
 import type {
   AttentionNote,
@@ -221,37 +226,124 @@ export async function insertAttentionNotes(
   return rows.length;
 }
 
-/** Maps each asset id to the Telegram chat_ids of users who have it in "Избранное" AND have
- * linked Telegram — two queries rather than a nested select, since user_watchlist and
- * telegram_links both reference auth.users but aren't FK-linked to each other. */
-async function getWatchlistChatIdsByAsset(assetIds: string[]): Promise<Map<string, number[]>> {
-  if (assetIds.length === 0) return new Map();
+interface WatchlistSubscriber {
+  assetId: string;
+  userId: string;
+  chatId: number;
+}
+
+/** Users who have each asset in "Избранное" AND have linked Telegram — two queries rather than
+ * a nested select, since user_watchlist and telegram_links both reference auth.users but
+ * aren't FK-linked to each other. */
+async function getWatchlistSubscribers(assetIds: string[]): Promise<WatchlistSubscriber[]> {
+  if (assetIds.length === 0) return [];
   const db = getServiceClient();
 
   const { data: watchRows, error: watchError } = await db
     .from("user_watchlist")
     .select("asset_id, user_id")
     .in("asset_id", assetIds);
-  if (watchError) throw new Error(`getWatchlistChatIdsByAsset failed: ${watchError.message}`);
-  if (!watchRows || watchRows.length === 0) return new Map();
+  if (watchError) throw new Error(`getWatchlistSubscribers failed: ${watchError.message}`);
+  if (!watchRows || watchRows.length === 0) return [];
 
   const userIds = [...new Set(watchRows.map((r) => r.user_id as string))];
   const { data: linkRows, error: linkError } = await db
     .from("telegram_links")
     .select("user_id, chat_id")
     .in("user_id", userIds);
-  if (linkError) throw new Error(`getWatchlistChatIdsByAsset failed: ${linkError.message}`);
+  if (linkError) throw new Error(`getWatchlistSubscribers failed: ${linkError.message}`);
 
   const chatIdByUser = new Map((linkRows ?? []).map((r) => [r.user_id as string, r.chat_id as number]));
 
-  const map = new Map<string, number[]>();
+  const subscribers: WatchlistSubscriber[] = [];
   for (const row of watchRows) {
     const chatId = chatIdByUser.get(row.user_id as string);
     if (chatId == null) continue;
-    const assetId = row.asset_id as string;
-    map.set(assetId, [...(map.get(assetId) ?? []), chatId]);
+    subscribers.push({ assetId: row.asset_id as string, userId: row.user_id as string, chatId });
+  }
+  return subscribers;
+}
+
+async function getWatchlistChatIdsByAsset(assetIds: string[]): Promise<Map<string, number[]>> {
+  const subscribers = await getWatchlistSubscribers(assetIds);
+  const map = new Map<string, number[]>();
+  for (const s of subscribers) {
+    map.set(s.assetId, [...(map.get(s.assetId) ?? []), s.chatId]);
   }
   return map;
+}
+
+// A 24h move of at least this magnitude is worth a DM. Cooldown keeps a price that stays
+// elevated across many pipeline runs (3x/day) from re-alerting every single run.
+const PRICE_ALERT_THRESHOLD_PCT = 5;
+const PRICE_ALERT_COOLDOWN_HOURS = 20;
+
+export interface PriceAlertCandidate {
+  assetId: string;
+  ticker: string;
+  name: string;
+  price: PriceSnapshot;
+}
+
+/** Checks every watchlisted asset's fresh price snapshot against PRICE_ALERT_THRESHOLD_PCT and
+ * DMs subscribed, Telegram-linked users — independent of whether the asset got a note this run,
+ * since price data is fetched for the whole watchlist every run regardless. */
+export async function checkPriceAlerts(candidates: PriceAlertCandidate[]): Promise<void> {
+  const triggered = candidates.filter(
+    (c) => c.price.changePct24h != null && Math.abs(c.price.changePct24h) >= PRICE_ALERT_THRESHOLD_PCT
+  );
+  if (triggered.length === 0) return;
+
+  const assetIds = [...new Set(triggered.map((c) => c.assetId))];
+  const subscribers = await getWatchlistSubscribers(assetIds);
+  if (subscribers.length === 0) return;
+
+  const db = getServiceClient();
+  const { data: stateRows, error: stateError } = await db
+    .from("price_alert_state")
+    .select("user_id, asset_id, last_alert_at")
+    .in("asset_id", assetIds);
+  if (stateError) throw new Error(`checkPriceAlerts failed: ${stateError.message}`);
+
+  const lastAlertByPair = new Map(
+    (stateRows ?? []).map((r) => [`${r.user_id}:${r.asset_id}`, new Date(r.last_alert_at as string).getTime()])
+  );
+  const cooldownMs = PRICE_ALERT_COOLDOWN_HOURS * 60 * 60 * 1000;
+  const now = Date.now();
+  const candidateByAsset = new Map(triggered.map((c) => [c.assetId, c]));
+
+  const toSend = subscribers.flatMap((sub) => {
+    const candidate = candidateByAsset.get(sub.assetId);
+    if (!candidate) return [];
+    const lastAlert = lastAlertByPair.get(`${sub.userId}:${sub.assetId}`);
+    if (lastAlert != null && now - lastAlert < cooldownMs) return [];
+    return [
+      {
+        userId: sub.userId,
+        assetId: sub.assetId,
+        chatId: sub.chatId,
+        ticker: candidate.ticker,
+        name: candidate.name,
+        changePct: candidate.price.changePct24h as number,
+        price: candidate.price.price,
+        currency: candidate.price.currency,
+        url: `${SITE_URL}/asset/${encodeURIComponent(candidate.ticker)}`,
+      },
+    ];
+  });
+  if (toSend.length === 0) return;
+
+  await sendPriceAlerts(toSend);
+
+  const upserts = toSend.map((n) => ({
+    user_id: n.userId,
+    asset_id: n.assetId,
+    last_alert_at: new Date().toISOString(),
+  }));
+  const { error: upsertError } = await db
+    .from("price_alert_state")
+    .upsert(upserts, { onConflict: "user_id,asset_id" });
+  if (upsertError) throw new Error(`checkPriceAlerts failed: ${upsertError.message}`);
 }
 
 interface AssetJoin {

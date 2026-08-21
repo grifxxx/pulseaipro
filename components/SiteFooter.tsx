@@ -19,6 +19,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <Link href="/about" className="hover:text-foreground transition-colors">
             {t.navAbout}
           </Link>
+          <a href="/feed.xml" className="hover:text-foreground transition-colors">
+            RSS
+          </a>
         </div>
       </div>
       <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-border/60 pt-4">

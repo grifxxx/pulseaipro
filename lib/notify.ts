@@ -186,3 +186,48 @@ export async function notifyWatchlistUsers(notifications: WatchlistNotification[
     await new Promise((resolve) => setTimeout(resolve, WATCHLIST_NOTIFY_DELAY_MS));
   }
 }
+
+export interface PriceAlertNotification {
+  chatId: number;
+  ticker: string;
+  name: string;
+  changePct: number;
+  price: number;
+  currency: string;
+  url: string;
+}
+
+async function sendSinglePriceAlert(n: PriceAlertNotification): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return;
+
+  const arrow = n.changePct >= 0 ? "🚀" : "🔻";
+  const sign = n.changePct >= 0 ? "+" : "";
+  const text = `${arrow} <b>${escapeHtml(n.name)} (${escapeHtml(n.ticker)})</b>: ${sign}${n.changePct.toFixed(
+    2
+  )}% за 24 часа\n\nТекущая цена: ${n.price} ${n.currency}\n\n${n.url}`;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: n.chatId, text, parse_mode: "HTML" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      console.error(`sendSinglePriceAlert: Telegram API returned ${res.status}: ${await res.text().catch(() => "")}`);
+    }
+  } catch (err) {
+    console.error("sendSinglePriceAlert: request failed", err instanceof Error ? err.message : err);
+  }
+}
+
+/** DMs users whose watchlist asset crossed the price-move threshold this run — cooldown-gated
+ * per user+asset by the caller (lib/db/queries.ts) so a price that stays elevated across many
+ * pipeline runs doesn't re-alert every run. */
+export async function sendPriceAlerts(notifications: PriceAlertNotification[]): Promise<void> {
+  for (const n of notifications) {
+    await sendSinglePriceAlert(n);
+    await new Promise((resolve) => setTimeout(resolve, WATCHLIST_NOTIFY_DELAY_MS));
+  }
+}

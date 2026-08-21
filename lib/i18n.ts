@@ -137,6 +137,7 @@ interface UIStrings {
   chartNoData: string;
   navLogin: string;
   navWatchlist: string;
+  navPortfolio: string;
   logoutButton: string;
   loginTitle: string;
   loginSubtitle: string;
@@ -155,6 +156,20 @@ interface UIStrings {
   telegramDisconnectButton: string;
   watchlistStarAdd: string;
   watchlistStarRemove: string;
+  portfolioTitle: string;
+  portfolioSubtitle: string;
+  portfolioEmpty: string;
+  portfolioTickerLabel: string;
+  portfolioTickerPlaceholder: string;
+  portfolioQuantityLabel: string;
+  portfolioAvgCostLabel: string;
+  portfolioAddButton: string;
+  portfolioTickerNotFound: string;
+  portfolioRemoveButton: string;
+  portfolioCurrentPriceLabel: string;
+  portfolioValueLabel: string;
+  portfolioPnlLabel: string;
+  portfolioNoPriceData: string;
 }
 
 const STRINGS: Record<Locale, UIStrings> = {
@@ -310,6 +325,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     chartNoData: "Недостаточно данных для графика.",
     navLogin: "Войти",
     navWatchlist: "Избранное",
+    navPortfolio: "Портфель",
     logoutButton: "Выйти",
     loginTitle: "Вход",
     loginSubtitle: "Введите email — пришлём ссылку для входа, пароль не нужен.",
@@ -328,6 +344,20 @@ const STRINGS: Record<Locale, UIStrings> = {
     telegramDisconnectButton: "Отключить",
     watchlistStarAdd: "Добавить в избранное",
     watchlistStarRemove: "Убрать из избранного",
+    portfolioTitle: "Портфель",
+    portfolioSubtitle: "Отслеживайте свою прибыль и убыток по активам, которыми вы владеете.",
+    portfolioEmpty: "Пока пусто. Добавьте первую позицию ниже.",
+    portfolioTickerLabel: "Тикер",
+    portfolioTickerPlaceholder: "например AAPL, OZON, bitcoin",
+    portfolioQuantityLabel: "Количество",
+    portfolioAvgCostLabel: "Средняя цена покупки",
+    portfolioAddButton: "Добавить позицию",
+    portfolioTickerNotFound: "Актив не найден. Сначала найдите его через поиск на главной странице.",
+    portfolioRemoveButton: "Удалить",
+    portfolioCurrentPriceLabel: "Текущая цена",
+    portfolioValueLabel: "Стоимость",
+    portfolioPnlLabel: "P&L",
+    portfolioNoPriceData: "Нет данных о цене",
   },
   en: {
     siteTitle: "PulseAiPro",
@@ -477,6 +507,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     chartNoData: "Not enough data for a chart.",
     navLogin: "Sign in",
     navWatchlist: "Watchlist",
+    navPortfolio: "Portfolio",
     logoutButton: "Sign out",
     loginTitle: "Sign in",
     loginSubtitle: "Enter your email — we'll send a sign-in link, no password needed.",
@@ -495,6 +526,20 @@ const STRINGS: Record<Locale, UIStrings> = {
     telegramDisconnectButton: "Disconnect",
     watchlistStarAdd: "Add to watchlist",
     watchlistStarRemove: "Remove from watchlist",
+    portfolioTitle: "Portfolio",
+    portfolioSubtitle: "Track profit and loss on the assets you own.",
+    portfolioEmpty: "Nothing here yet. Add your first position below.",
+    portfolioTickerLabel: "Ticker",
+    portfolioTickerPlaceholder: "e.g. AAPL, OZON, bitcoin",
+    portfolioQuantityLabel: "Quantity",
+    portfolioAvgCostLabel: "Average buy price",
+    portfolioAddButton: "Add position",
+    portfolioTickerNotFound: "Asset not found. Search for it on the homepage first.",
+    portfolioRemoveButton: "Remove",
+    portfolioCurrentPriceLabel: "Current price",
+    portfolioValueLabel: "Value",
+    portfolioPnlLabel: "P&L",
+    portfolioNoPriceData: "No price data",
   },
 };
 
