@@ -17,8 +17,9 @@ export function TelegramLinkButton({ locale }: { locale: Locale }) {
   useEffect(() => {
     let cancelled = false;
     const supabase = getBrowserAuthClient();
+    type GetUserResult = Awaited<ReturnType<typeof supabase.auth.getUser>>;
 
-    supabase.auth.getUser().then(async (result) => {
+    supabase.auth.getUser().then(async (result: GetUserResult) => {
       if (cancelled) return;
       const uid = result.data.user?.id ?? null;
       setUserId(uid);
