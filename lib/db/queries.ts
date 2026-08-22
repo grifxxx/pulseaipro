@@ -1,12 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
 import { submitToIndexNow } from "@/lib/indexnow";
-import {
-  postNotableNotesToChannel,
-  notifyWatchlistUsers,
-  sendPriceAlerts,
-  NOTABLE_SENTIMENT_THRESHOLD,
-} from "@/lib/notify";
+import { postNotableNotesToChannel, notifyWatchlistUsers, sendPriceAlerts } from "@/lib/notify";
 import { SITE_URL } from "@/lib/seo";
 import type {
   AttentionNote,
@@ -506,33 +501,4 @@ export async function getNotesInRange(fromISO: string, toISO: string): Promise<A
     .order("generated_at", { ascending: true });
   if (error) throw new Error(`getNotesInRange failed: ${error.message}`);
   return (data ?? []).map(rowToAttentionNote);
-}
-
-/** Significant notes (|sentimentScore| >= NOTABLE_SENTIMENT_THRESHOLD — same bar as the Telegram
- * channel posts) from the last `days` days, capped at `perDayLimit` per calendar day and ranked
- * by sentiment strength within each day. Used for the Zen RSS feed, which should read like a
- * curated highlights list, not every note the pipeline ever generates. */
-export async function getSignificantNotesForFeed(
-  days: number,
-  perDayLimit: number
-): Promise<AttentionNoteRow[]> {
-  const to = new Date();
-  const from = new Date(to.getTime() - days * 24 * 60 * 60 * 1000);
-  const notes = await getNotesInRange(from.toISOString(), to.toISOString());
-  const significant = notes.filter((n) => Math.abs(n.sentimentScore) >= NOTABLE_SENTIMENT_THRESHOLD);
-
-  const byDay = new Map<string, AttentionNoteRow[]>();
-  for (const note of significant) {
-    const day = note.generatedAt.slice(0, 10);
-    const list = byDay.get(day) ?? [];
-    list.push(note);
-    byDay.set(day, list);
-  }
-
-  const capped: AttentionNoteRow[] = [];
-  for (const dayNotes of byDay.values()) {
-    dayNotes.sort((a, b) => Math.abs(b.sentimentScore) - Math.abs(a.sentimentScore));
-    capped.push(...dayNotes.slice(0, perDayLimit));
-  }
-  return capped;
 }
