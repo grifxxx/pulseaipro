@@ -135,6 +135,7 @@ interface UIStrings {
   chartLoading: string;
   chartError: string;
   chartNoData: string;
+  sentimentHistoryTitle: string;
   navLogin: string;
   navWatchlist: string;
   navPortfolio: string;
@@ -323,6 +324,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     chartLoading: "Загружаем график…",
     chartError: "Не удалось загрузить график.",
     chartNoData: "Недостаточно данных для графика.",
+    sentimentHistoryTitle: "История настроения",
     navLogin: "Войти",
     navWatchlist: "Избранное",
     navPortfolio: "Портфель",
@@ -505,6 +507,7 @@ const STRINGS: Record<Locale, UIStrings> = {
     chartLoading: "Loading chart…",
     chartError: "Couldn't load the chart.",
     chartNoData: "Not enough data for a chart.",
+    sentimentHistoryTitle: "Sentiment history",
     navLogin: "Sign in",
     navWatchlist: "Watchlist",
     navPortfolio: "Portfolio",

@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
-import { getAssetHistoryPage } from "@/lib/db/queries";
+import { getAssetHistoryPage, getSentimentHistory } from "@/lib/db/queries";
 import { AssetCard } from "@/components/AssetCard";
 import { BlogPagination } from "@/components/BlogPagination";
 import { PriceChart } from "@/components/PriceChart";
+import { SentimentTrendChart } from "@/components/SentimentTrendChart";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
 import { assetArticleJsonLd, breadcrumbJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
@@ -56,6 +57,7 @@ export default async function AssetHistoryPage({ params, searchParams }: PagePar
 
   const { notes, totalCount, page } = await getAssetHistoryPage(symbol, requestedPage, PAGE_SIZE);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const sentimentHistory = await getSentimentHistory(symbol);
   const jsonLd = assetArticleJsonLd({
     ticker: latest.ticker,
     name: latest.name,
@@ -87,6 +89,7 @@ export default async function AssetHistoryPage({ params, searchParams }: PagePar
       </h1>
       <p className="text-sm text-muted">{t.historySubtitle}</p>
       <PriceChart ticker={latest.ticker} market={latest.market} locale={locale} />
+      <SentimentTrendChart points={sentimentHistory} locale={locale} />
       <div className="flex flex-col gap-4 mt-2">
         {notes.map((note, i) => (
           <Fragment key={note.id}>

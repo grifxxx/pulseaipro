@@ -474,6 +474,27 @@ export const getAssetHistoryPage = cache(
   }
 );
 
+export interface SentimentPoint {
+  generatedAt: string;
+  sentimentScore: number;
+}
+
+/** Lightweight — only the two columns a sentiment trend chart needs, not the full note text —
+ * for a ticker's whole history (some tickers have hundreds of notes by now). */
+export const getSentimentHistory = cache(async (symbol: string): Promise<SentimentPoint[]> => {
+  const db = getPublicClient();
+  const { data, error } = await db
+    .from("attention_notes")
+    .select("generated_at, sentiment_score")
+    .eq("symbol", symbol)
+    .order("generated_at", { ascending: true });
+  if (error) throw new Error(`getSentimentHistory failed: ${error.message}`);
+  return (data ?? []).map((r) => ({
+    generatedAt: r.generated_at as string,
+    sentimentScore: Number(r.sentiment_score),
+  }));
+});
+
 /** All notes (every market, every symbol — not deduped) published within a date range, for retrospectives. */
 export async function getNotesInRange(fromISO: string, toISO: string): Promise<AttentionNoteRow[]> {
   const db = getServiceClient();
