@@ -1,3 +1,6 @@
+import type { ArticleKind } from "@/lib/types";
+import { authorJsonLd } from "@/lib/author";
+
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
   /\/$/,
   ""
@@ -20,9 +23,29 @@ export function websiteJsonLd() {
     name: SITE_NAME,
     url: SITE_URL,
     description:
-      "Ежедневные ИИ-сводки новостей по акциям США, российским акциям и криптовалютам — информационный контент, не инвестиционная рекомендация.",
+      "Разборы и руководства по инвестициям, налогам и криптовалютам на понятном языке, плюс лента рыночных новостей — информационный контент, не инвестиционная рекомендация.",
   };
 }
+
+/** Which article kinds we let search engines index.
+ *
+ * Everything else — the daily market recaps, the satirical pieces, the periodic retrospectives —
+ * is dated, near-identical in structure and obsolete within a day. Yandex crawled ~200 such pages
+ * and kept 4, actively dropping the rest as low-value, which drags the whole domain down. They
+ * stay on the site for readers and for the RSS/Zen feed, but they are no longer offered to search. */
+export const INDEXABLE_ARTICLE_KINDS: ReadonlySet<ArticleKind> = new Set<ArticleKind>([
+  "evergreen",
+  "sponsored",
+]);
+
+export function isIndexableArticleKind(kind: ArticleKind): boolean {
+  return INDEXABLE_ARTICLE_KINDS.has(kind);
+}
+
+/** Crawlable but not indexable: the crawler still follows the links out of the page (so it reaches
+ * the evergreen guides), it just doesn't put the page itself in the index. Deliberately not a
+ * robots.txt Disallow — a blocked page is never fetched, so the noindex would never be seen. */
+export const NOINDEX_FOLLOW = { index: false, follow: true } as const;
 
 export interface BreadcrumbItem {
   name: string;
@@ -74,6 +97,9 @@ interface BlogPostingInput {
   imageUrl: string;
   datePublished: string;
   url: string;
+  /** True for pieces written under the site author's byline. Sponsored placements keep the
+   * organisation as author — attributing an ad to a named person would be a false signal. */
+  authored?: boolean;
 }
 
 export function blogPostingJsonLd(input: BlogPostingInput) {
@@ -87,10 +113,12 @@ export function blogPostingJsonLd(input: BlogPostingInput) {
     dateModified: input.datePublished,
     url: input.url,
     mainEntityOfPage: input.url,
-    author: {
-      "@type": "Organization",
-      name: SITE_NAME,
-    },
+    author: input.authored
+      ? authorJsonLd(SITE_URL)
+      : {
+          "@type": "Organization",
+          name: SITE_NAME,
+        },
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,

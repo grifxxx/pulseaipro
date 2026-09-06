@@ -8,7 +8,13 @@ import { PriceChart } from "@/components/PriceChart";
 import { SentimentTrendChart } from "@/components/SentimentTrendChart";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
-import { assetArticleJsonLd, breadcrumbJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
+import {
+  assetArticleJsonLd,
+  breadcrumbJsonLd,
+  NOINDEX_FOLLOW,
+  SITE_URL,
+  truncateForDescription,
+} from "@/lib/seo";
 import { offerForKey } from "@/lib/sponsors";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -37,6 +43,9 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
     description,
     alternates: { canonical: `/asset/${encodeURIComponent(latest.ticker)}` },
     openGraph: { title, description },
+    // 83 near-identical auto-generated ticker pages were the bulk of what Yandex crawled and
+    // discarded. They stay for readers and for internal linking, but out of the index.
+    robots: NOINDEX_FOLLOW,
   };
 }
 

@@ -7,7 +7,15 @@ import { ArticleBody } from "@/components/ArticleBody";
 import { ShareButtons } from "@/components/ShareButtons";
 import { SponsorCard } from "@/components/SponsorCard";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
-import { blogPostingJsonLd, breadcrumbJsonLd, SITE_URL, truncateForDescription } from "@/lib/seo";
+import {
+  blogPostingJsonLd,
+  breadcrumbJsonLd,
+  isIndexableArticleKind,
+  NOINDEX_FOLLOW,
+  SITE_URL,
+  truncateForDescription,
+} from "@/lib/seo";
+import { AUTHOR_NAME, AUTHOR_TAGLINE } from "@/lib/author";
 import { SPONSOR_OFFERS, offerForKey } from "@/lib/sponsors";
 
 export const revalidate = 0;
@@ -29,6 +37,7 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
     description,
     alternates: { canonical: `/blog/${article.slug}` },
     openGraph: { title, description, images: [article.coverImageUrl] },
+    ...(isIndexableArticleKind(article.kind) ? {} : { robots: NOINDEX_FOLLOW }),
   };
 }
 
@@ -43,6 +52,7 @@ export default async function ArticlePage({ params }: PageParams) {
 
   const display = localizeArticle(article, locale);
   const isSponsored = article.kind === "sponsored";
+  const isAuthored = article.kind === "evergreen";
   const sponsoredOffer = isSponsored ? SPONSOR_OFFERS.find((o) => o.id === "tbank-autofollow") : undefined;
   const jsonLd = blogPostingJsonLd({
     headline: display.title,
@@ -50,6 +60,7 @@ export default async function ArticlePage({ params }: PageParams) {
     imageUrl: display.coverImageUrl,
     datePublished: display.publishedAt,
     url: `${SITE_URL}/blog/${display.slug}`,
+    authored: isAuthored,
   });
   const breadcrumbs = breadcrumbJsonLd([
     { name: t.navFeed, url: SITE_URL },
@@ -88,6 +99,14 @@ export default async function ArticlePage({ params }: PageParams) {
         )}
         <h1 className="text-3xl font-bold tracking-tight">{display.title}</h1>
         <p className="text-base text-muted">{display.dek}</p>
+        {isAuthored && (
+          <div className="text-sm text-muted">
+            <Link href="/about" className="font-medium text-foreground hover:text-accent transition-colors">
+              {AUTHOR_NAME}
+            </Link>
+            <span className="text-muted/70"> — {AUTHOR_TAGLINE}</span>
+          </div>
+        )}
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="text-xs text-muted/70">
             {t.publishedLabel}: {new Date(display.publishedAt).toLocaleString(locale === "ru" ? "ru-RU" : "en-US")}
