@@ -45,6 +45,24 @@ function articleBlockToHtml(block: ArticleBlock): string {
       return `<figure><img src="${escapeXml(block.src)}" alt="${escapeXml(
         block.caption.ru
       )}" /><figcaption>${escapeXml(block.caption.ru)}</figcaption></figure>`;
+    case "list": {
+      const tag = block.ordered ? "ol" : "ul";
+      const items = block.items.ru.map((item) => `<li>${escapeXml(item)}</li>`).join("");
+      return `<${tag}>${items}</${tag}>`;
+    }
+    case "table": {
+      const head = block.columns.ru.map((c) => `<th>${escapeXml(c)}</th>`).join("");
+      const body = block.rows.ru
+        .map((row) => `<tr>${row.map((cell) => `<td>${escapeXml(cell)}</td>`).join("")}</tr>`)
+        .join("");
+      const caption = block.caption.ru ? `<caption>${escapeXml(block.caption.ru)}</caption>` : "";
+      return `<table>${caption}<thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+    case "callout":
+      // Zen strips most styling, so the callout survives as a titled blockquote rather than a box.
+      return `<blockquote><p><strong>${escapeXml(block.title.ru)}</strong></p><p>${escapeXml(
+        block.text.ru
+      )}</p></blockquote>`;
   }
 }
 

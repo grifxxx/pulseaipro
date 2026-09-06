@@ -53,6 +53,22 @@ export function localizeArticle(article: Article, locale: Locale): DisplayArticl
           return block;
         case "chart":
           return { type: "chart", src: block.src, caption: block.caption[locale] };
+        case "list":
+          return { type: "list", ordered: block.ordered, items: block.items[locale] };
+        case "table":
+          return {
+            type: "table",
+            caption: block.caption[locale],
+            columns: block.columns[locale],
+            rows: block.rows[locale],
+          };
+        case "callout":
+          return {
+            type: "callout",
+            variant: block.variant,
+            title: block.title[locale],
+            text: block.text[locale],
+          };
       }
     }),
   };

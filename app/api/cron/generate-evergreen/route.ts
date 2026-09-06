@@ -17,7 +17,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const result = await generateNextEvergreenArticle();
+    // ?slug=<topic> regenerates one specific guide in place; the cron passes nothing and just
+    // takes the next one in the queue.
+    const slug = req.nextUrl.searchParams.get("slug") ?? undefined;
+    const result = await generateNextEvergreenArticle(slug);
 
     if (result.status === "failed") {
       await sendTelegramAlert(

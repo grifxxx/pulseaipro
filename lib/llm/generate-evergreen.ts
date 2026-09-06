@@ -5,11 +5,31 @@ import {
   evergreenUserPrompt,
 } from "@/lib/llm/evergreen-prompts";
 import type { EvergreenTopic } from "@/lib/content/evergreen-topics";
-import type { Localized } from "@/lib/types";
+import type { CalloutVariant, Localized } from "@/lib/types";
+
+export interface EvergreenTable {
+  caption: Localized<string>;
+  columns: Localized<string[]>;
+  rows: Localized<string[][]>;
+}
+
+export interface EvergreenList {
+  ordered: boolean;
+  items: Localized<string[]>;
+}
+
+export interface EvergreenCallout {
+  variant: CalloutVariant;
+  title: Localized<string>;
+  text: Localized<string>;
+}
 
 export interface EvergreenSection {
   heading: Localized<string>;
   paragraphs: Localized<string>[];
+  list: EvergreenList | null;
+  table: EvergreenTable | null;
+  callout: EvergreenCallout | null;
 }
 
 export interface EvergreenDraft {
@@ -25,7 +45,13 @@ interface RawEvergreen {
   title: Localized<string>;
   dek: Localized<string>;
   lead: Localized<string>;
-  sections: { heading: Localized<string>; paragraphs: Localized<string>[] }[];
+  sections: {
+    heading: Localized<string>;
+    paragraphs: Localized<string>[];
+    list: EvergreenList | null;
+    table: EvergreenTable | null;
+    callout: EvergreenCallout | null;
+  }[];
   takeaways: Localized<string>;
   cover_image_prompt: string;
 }
@@ -35,12 +61,27 @@ interface RawEvergreen {
  * better to fail the run and alert than to add another low-value URL to the domain. */
 const MIN_RU_BODY_CHARS = 2500;
 
+/** A table is only usable if both language grids are rectangular and agree with each other. A
+ * ragged one renders as broken markup, so drop it and keep the prose rather than ship that. */
+function isUsableTable(table: EvergreenTable): boolean {
+  const width = table.columns.ru.length;
+  if (width < 2 || table.columns.en.length !== width) return false;
+  if (table.rows.ru.length === 0 || table.rows.ru.length !== table.rows.en.length) return false;
+  return [...table.rows.ru, ...table.rows.en].every((row) => row.length === width);
+}
+
+function isUsableList(list: EvergreenList): boolean {
+  return list.items.ru.length > 1 && list.items.ru.length === list.items.en.length;
+}
+
 function russianBodyLength(draft: EvergreenDraft): number {
-  const parts = [
-    draft.lead.ru,
-    draft.takeaways.ru,
-    ...draft.sections.flatMap((s) => [s.heading.ru, ...s.paragraphs.map((p) => p.ru)]),
-  ];
+  const parts = [draft.lead.ru, draft.takeaways.ru];
+  for (const section of draft.sections) {
+    parts.push(section.heading.ru, ...section.paragraphs.map((p) => p.ru));
+    if (section.list) parts.push(...section.list.items.ru);
+    if (section.table) parts.push(...section.table.rows.ru.flat());
+    if (section.callout) parts.push(section.callout.title.ru, section.callout.text.ru);
+  }
   return parts.join(" ").length;
 }
 
@@ -68,7 +109,15 @@ export async function generateEvergreenDraft(topic: EvergreenTopic): Promise<Eve
     title: raw.title,
     dek: raw.dek,
     lead: raw.lead,
-    sections: raw.sections.filter((s) => s.paragraphs.length > 0),
+    sections: raw.sections
+      .filter((s) => s.paragraphs.length > 0)
+      .map((s) => ({
+        heading: s.heading,
+        paragraphs: s.paragraphs,
+        list: s.list && isUsableList(s.list) ? s.list : null,
+        table: s.table && isUsableTable(s.table) ? s.table : null,
+        callout: s.callout,
+      })),
     takeaways: raw.takeaways,
     coverImagePrompt: raw.cover_image_prompt,
   };

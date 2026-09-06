@@ -28,6 +28,27 @@ function draftToBlocks(draft: Awaited<ReturnType<typeof generateEvergreenDraft>>
     for (const paragraph of section.paragraphs) {
       body.push({ type: "paragraph", text: paragraph });
     }
+    // Fixed order within a section: prose sets up the facts, the list or table lays them out,
+    // and the callout is the thing to remember on the way out.
+    if (section.list) {
+      body.push({ type: "list", ordered: section.list.ordered, items: section.list.items });
+    }
+    if (section.table) {
+      body.push({
+        type: "table",
+        caption: section.table.caption,
+        columns: section.table.columns,
+        rows: section.table.rows,
+      });
+    }
+    if (section.callout) {
+      body.push({
+        type: "callout",
+        variant: section.callout.variant,
+        title: section.callout.title,
+        text: section.callout.text,
+      });
+    }
   }
 
   body.push({
@@ -39,12 +60,23 @@ function draftToBlocks(draft: Awaited<ReturnType<typeof generateEvergreenDraft>>
   return body;
 }
 
-/** Generates and publishes the next evergreen guide in the queue. One article per run — these are
- * meant to be few and good, which is the whole point of replacing the daily recap treadmill. */
-export async function generateNextEvergreenArticle(): Promise<EvergreenGenerationResult> {
-  const topic = await nextUnpublishedTopic();
+/** Generates and publishes an evergreen guide. One article per run — these are meant to be few
+ * and good, which is the whole point of replacing the daily recap treadmill.
+ *
+ * With no `slug` it takes the next unpublished topic in the queue, which is what the cron does.
+ * Passing a slug regenerates that specific topic instead: insertArticle upserts on slug, so the
+ * existing article is replaced in place, keeping its URL and whatever links point at it. */
+export async function generateNextEvergreenArticle(slug?: string): Promise<EvergreenGenerationResult> {
+  const topic = slug
+    ? EVERGREEN_TOPICS.find((t) => t.slug === slug)
+    : await nextUnpublishedTopic();
   if (!topic) {
-    return { status: "skipped", reason: "evergreen queue is empty — add topics to EVERGREEN_TOPICS" };
+    return {
+      status: "skipped",
+      reason: slug
+        ? `no topic with slug "${slug}" in EVERGREEN_TOPICS`
+        : "evergreen queue is empty — add topics to EVERGREEN_TOPICS",
+    };
   }
 
   try {

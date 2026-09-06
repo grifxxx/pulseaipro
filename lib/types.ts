@@ -107,11 +107,16 @@ export interface ArticleAssetWidget {
   currency: string;
 }
 
+export type CalloutVariant = "example" | "warning" | "note";
+
 export type ArticleBlock =
   | { type: "heading"; text: Localized<string> }
   | { type: "paragraph"; text: Localized<string> }
   | ({ type: "asset" } & ArticleAssetWidget)
-  | { type: "chart"; src: string; caption: Localized<string> };
+  | { type: "chart"; src: string; caption: Localized<string> }
+  | { type: "list"; ordered: boolean; items: Localized<string[]> }
+  | { type: "table"; caption: Localized<string>; columns: Localized<string[]>; rows: Localized<string[][]> }
+  | { type: "callout"; variant: CalloutVariant; title: Localized<string>; text: Localized<string> };
 
 export type ArticleKind = "daily" | "retrospective" | "sponsored" | "humor" | "evergreen";
 export type RetrospectivePeriod = "weekly" | "monthly" | "semiannual" | "yearly";
@@ -137,7 +142,10 @@ export type DisplayArticleBlock =
   | { type: "heading"; text: string }
   | { type: "paragraph"; text: string }
   | ({ type: "asset" } & ArticleAssetWidget)
-  | { type: "chart"; src: string; caption: string };
+  | { type: "chart"; src: string; caption: string }
+  | { type: "list"; ordered: boolean; items: string[] }
+  | { type: "table"; caption: string; columns: string[]; rows: string[][] }
+  | { type: "callout"; variant: CalloutVariant; title: string; text: string };
 
 export interface DisplayArticle {
   id: string;
