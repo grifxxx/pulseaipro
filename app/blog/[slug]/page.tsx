@@ -15,7 +15,7 @@ import {
   SITE_URL,
   truncateForDescription,
 } from "@/lib/seo";
-import { BYLINE, CREATOR_NAME } from "@/lib/author";
+import { AUTHOR_BIO, AUTHOR_NAME } from "@/lib/author";
 import { SPONSOR_OFFERS, offerForKey } from "@/lib/sponsors";
 
 export const revalidate = 0;
@@ -60,7 +60,7 @@ export default async function ArticlePage({ params }: PageParams) {
     imageUrl: display.coverImageUrl,
     datePublished: display.publishedAt,
     url: `${SITE_URL}/blog/${display.slug}`,
-    machineWritten: isGuide,
+    authored: isGuide,
   });
   const breadcrumbs = breadcrumbJsonLd([
     { name: t.navFeed, url: SITE_URL },
@@ -100,15 +100,16 @@ export default async function ArticlePage({ params }: PageParams) {
         <h1 className="text-3xl font-bold tracking-tight">{display.title}</h1>
         <p className="text-base text-muted">{display.dek}</p>
         {isGuide && (
-          <div className="text-sm text-muted">
-            {BYLINE[locale === "ru" ? "ru" : "en"].writtenBy}
-            <span className="text-muted/70">
-              {" · "}
-              {BYLINE[locale === "ru" ? "ru" : "en"].creditLabel}:{" "}
-            </span>
-            <Link href="/about" className="font-medium text-foreground hover:text-accent transition-colors">
-              {CREATOR_NAME}
-            </Link>
+          <div className="flex flex-col gap-0.5 border-l-2 border-accent/30 pl-3">
+            <div className="text-sm">
+              <Link href="/about" className="font-semibold text-foreground hover:text-accent transition-colors">
+                {AUTHOR_NAME}
+              </Link>
+              <span className="text-muted"> — {AUTHOR_BIO[locale === "ru" ? "ru" : "en"].short}</span>
+            </div>
+            <div className="text-xs text-muted/70">
+              {AUTHOR_BIO[locale === "ru" ? "ru" : "en"].disclosure}
+            </div>
           </div>
         )}
         <div className="flex items-center justify-between gap-3 flex-wrap">

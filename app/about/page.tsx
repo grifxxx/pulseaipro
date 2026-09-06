@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
+import { AUTHOR_PROJECTS } from "@/lib/author";
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
 // separately from the on-page heading/intro so the search snippet can be clear and
@@ -8,7 +9,7 @@ import { resolveLocale, getStrings } from "@/lib/i18n";
 export const metadata: Metadata = {
   title: "О проекте PulseAiPro — кто пишет статьи и на каких данных",
   description:
-    "Разборы на PulseAiPro пишет нейросеть по заданию Григория Яцунова, создателя алгоритма. Рассказываем, как устроен процесс, откуда берутся данные и почему мы говорим об этом прямо.",
+    "Автор проекта — Григорий Яцунов, около пяти лет торгует акциями, предприниматель и разработчик сервисов. Рассказываем, как готовятся разборы, откуда берутся данные и какую роль играет ИИ.",
   alternates: { canonical: "/about" },
 };
 
@@ -34,6 +35,27 @@ export default async function AboutPage() {
       {t.aboutAuthorBody.map((paragraph, i) => (
         <p key={i}>{paragraph}</p>
       ))}
+
+      <h3 className="text-base font-semibold text-foreground mt-3">{t.aboutProjectsTitle}</h3>
+      <ul className="flex flex-col gap-1.5">
+        {AUTHOR_PROJECTS.map((project) => (
+          <li key={project.url} className="flex gap-2">
+            <span className="text-accent select-none">•</span>
+            <span>
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener"
+                className="font-medium text-foreground hover:text-accent transition-colors"
+              >
+                {project.name}
+              </a>
+              {" — "}
+              {project.description[locale === "ru" ? "ru" : "en"]}
+            </span>
+          </li>
+        ))}
+      </ul>
 
       <h2 className="text-lg font-semibold text-foreground mt-2">{t.aboutSourcesTitle}</h2>
       <ul className="flex flex-col gap-1.5">

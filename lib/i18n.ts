@@ -117,6 +117,7 @@ interface UIStrings {
   aboutSources: string[];
   aboutAuthorTitle: string;
   aboutAuthorBody: string[];
+  aboutProjectsTitle: string;
   faqTitle: string;
   faqSubtitle: string;
   faqItems: FaqItem[];
@@ -250,12 +251,13 @@ const STRINGS: Record<Locale, UIStrings> = {
       "Общие новости — RSS-ленты CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, РБК, Ведомости, ТАСС",
       "Синтез сводок — OpenAI, на основе только перечисленных источников",
     ],
-    aboutAuthorTitle: "Кто ведёт проект",
+    aboutAuthorTitle: "Автор",
     aboutAuthorBody: [
-      "Проект создал Григорий Владимирович Яцунов — автор алгоритма, который стоит за публикациями на сайте.",
-      "Статьи в блоге пишет нейросеть. Ей заранее задано, о чём писать, по какому плану и каким требованиям должен отвечать материал: прямой ответ на вопрос в первом абзаце, разбор с числовым примером, никаких призывов покупать или продавать. Отбор тем, постановка задачи и решение о публикации — за человеком, сами формулировки — машинные.",
-      "Мы пишем об этом прямо, а не прячем за вымышленным автором: читатель должен понимать, что перед ним, и сам решать, насколько этому доверять. По любым вопросам к материалам пишите на почту, указанную в подвале сайта.",
+      "Григорий Владимирович Яцунов — предприниматель и разработчик веб-сервисов. Около пяти лет торгует акциями на бирже; этот опыт и определяет, о чём здесь пишут и на какие детали обращают внимание.",
+      "Разборы готовит ИИ-система, которую он же и построил: тема, план и требования к каждому материалу задаются заранее — прямой ответ на вопрос в первом абзаце, расчёт с числами, никаких призывов покупать или продавать. Что выходит на сайте и под чьим именем, решает автор, и он же за это отвечает.",
+      "Мы говорим об этом прямо, а не прячем за вымышленной редакцией: читатель должен понимать, как сделан текст, и сам решать, насколько ему доверять. Вопросы и замечания по материалам — на почту, указанную в подвале сайта.",
     ],
+    aboutProjectsTitle: "Другие проекты автора",
     faqTitle: "Вопросы и ответы",
     faqSubtitle: "Коротко о том, как устроен PulseAiPro и как им пользоваться.",
     faqItems: [
@@ -440,12 +442,13 @@ const STRINGS: Record<Locale, UIStrings> = {
       "General news — RSS feeds from CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, RBC, Vedomosti, TASS",
       "Note synthesis — OpenAI, based only on the sources listed above",
     ],
-    aboutAuthorTitle: "Who runs this project",
+    aboutAuthorTitle: "Author",
     aboutAuthorBody: [
-      "The project was built by Grigoriy Vladimirovich Yatsunov, who wrote the algorithm behind everything published here.",
-      "The blog articles are written by a neural network. What it writes about, the outline it follows and the standards it has to meet are set in advance: answer the question in the opening paragraph, work through a numbered example, never tell anyone to buy or sell. Choosing the topics, setting the task and deciding what goes live is a person's job; the wording itself is the machine's.",
-      "We say so plainly rather than hiding behind an invented author: you should know what you are reading and judge for yourself how much to trust it. Questions about any article go to the email in the site footer.",
+      "Grigoriy Vladimirovich Yatsunov is an entrepreneur and web services developer. He has been trading stocks for around five years, and that experience is what decides which topics get covered here and which details get attention.",
+      "The guides are drafted by an AI system he built himself: the topic, the outline and the requirements are set in advance — answer the question in the opening paragraph, work through a numbered example, never tell anyone to buy or sell. What goes live, and under whose name, is his decision and his responsibility.",
+      "We say so plainly rather than hiding behind an invented editorial team: you should know how the text was made and judge for yourself how much to trust it. Questions and corrections go to the email in the site footer.",
     ],
+    aboutProjectsTitle: "Other projects by the author",
     faqTitle: "Frequently asked questions",
     faqSubtitle: "A short explainer on how PulseAiPro works.",
     faqItems: [

@@ -1,27 +1,63 @@
 import { LEGAL_EMAIL } from "@/lib/legal";
 
-/** Who is behind the content, stated accurately.
+/** The site's author.
  *
- * The guides are written by a model, not by a person, so the site does not put a human name in
- * the "author" slot — that would be a false signal, and a false signal is worse than none. What
- * is true, and what the byline and the structured data say instead, is that a named, identifiable
- * person built the pipeline, decides what it writes about and answers for what gets published. */
-export const CREATOR_NAME = "Григорий Яцунов";
-export const CREATOR_EMAIL = LEGAL_EMAIL;
-export const CREATOR_URL = "/about";
+ * Finance is a YMYL topic, so a named person with real, checkable experience standing behind the
+ * material is worth more than any amount of on-page optimisation. He is the author in the sense
+ * that matters: he sets each guide's topic, outline and requirements, and answers for what goes
+ * live under his name.
+ *
+ * The AI disclosure below stays regardless. Drafts are produced by the pipeline he built, and
+ * saying so costs nothing — search engines penalise *undisclosed* machine-written content far
+ * more heavily than disclosed content, and a reader who discovers it themselves trusts the site
+ * less than one who was told up front. */
+export const AUTHOR_NAME = "Григорий Яцунов";
+export const AUTHOR_EMAIL = LEGAL_EMAIL;
+export const AUTHOR_URL = "/about";
 
-/** Byline shown above every generated guide. Disclosure is deliberate: search engines treat
- * undisclosed machine-written content far worse than disclosed machine-written content. */
-export const BYLINE = {
-  ru: { writtenBy: "Текст подготовлен нейросетью PulseAiPro", creditLabel: "Алгоритм" },
-  en: { writtenBy: "Written by the PulseAiPro neural network", creditLabel: "Algorithm" },
+export const AUTHOR_BIO = {
+  ru: {
+    jobTitle: "предприниматель, разработчик веб-сервисов",
+    short: "Около пяти лет торгует акциями на бирже. Предприниматель, разрабатывает веб-сервисы.",
+    disclosure:
+      "Разборы готовит ИИ-система проекта — тема, план и требования к материалу задаются автором.",
+  },
+  en: {
+    jobTitle: "entrepreneur, web services developer",
+    short: "Around five years of trading stocks. Entrepreneur, builds web services.",
+    disclosure:
+      "Guides are drafted by the project's own AI system — the topic, outline and requirements are set by the author.",
+  },
 } as const;
 
-export function creatorJsonLd(siteUrl: string) {
+/** Other projects by the same person, linked from the author block and emitted as sameAs.
+ *
+ * Deliberately only the two that support the claim a reader is weighing here — one is literally
+ * about crypto and broker taxes, the other is a working analytics service. The rest of his sites
+ * (esoterica, a pet encyclopedia, a lingerie shop) are real but off-topic, and linking them from
+ * the author block of a YMYL finance page dilutes the signal rather than adding to it. */
+export const AUTHOR_PROJECTS = [
+  {
+    url: "https://deklarium.ru/",
+    name: "Деклариум",
+    description: { ru: "декларация 3-НДФЛ по криптовалюте и брокерским счетам", en: "Russian tax filing for crypto and brokerage accounts" },
+  },
+  {
+    url: "https://sellops.ru/",
+    name: "Sellops",
+    description: { ru: "сервис аналитики Ozon: юнит-экономика и продажи", en: "Ozon marketplace analytics: unit economics and sales" },
+  },
+] as const;
+
+export function authorJsonLd(siteUrl: string) {
   return {
     "@type": "Person",
-    name: CREATOR_NAME,
-    email: CREATOR_EMAIL,
-    url: `${siteUrl}${CREATOR_URL}`,
+    name: AUTHOR_NAME,
+    email: AUTHOR_EMAIL,
+    url: `${siteUrl}${AUTHOR_URL}`,
+    jobTitle: AUTHOR_BIO.ru.jobTitle,
+    description: AUTHOR_BIO.ru.short,
+    knowsAbout: ["Инвестиции", "Фондовый рынок", "Криптовалюты", "Налогообложение инвестиций"],
+    sameAs: AUTHOR_PROJECTS.map((p) => p.url),
   };
 }
