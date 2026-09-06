@@ -12,9 +12,37 @@ export interface SponsorOffer {
   /** ORD marking token (erid). Required by RU ad-marking law for every placement — add it here
    * as soon as it's issued for an offer; until then the card simply omits that line. */
   erid?: string;
+  /** The site owner's own service rather than a paid third-party placement. Changes what the
+   * disclosure says: there is no advertiser paying us and no commission, but the reader is
+   * still owed the fact that the site and the service belong to the same person. Self-promotion
+   * of one's own services on one's own site is also not "реклама" under RU ad law, so these
+   * carry no erid. */
+  selfPromo?: boolean;
+}
+
+/** Offers that back a full sponsored article, keyed by that article's slug. Without this every
+ * sponsored post showed the same hardcoded advertiser in its disclosure banner. */
+export const OFFER_BY_ARTICLE_SLUG: Record<string, string> = {
+  "avtosledovanie-tbank-obzor": "tbank-autofollow",
+  "deklarium-nalog-s-kriptovalyuty": "deklarium",
+};
+
+export function offerForArticleSlug(slug: string): SponsorOffer | undefined {
+  const id = OFFER_BY_ARTICLE_SLUG[slug];
+  return id ? SPONSOR_OFFERS.find((o) => o.id === id) : undefined;
 }
 
 export const SPONSOR_OFFERS: SponsorOffer[] = [
+  {
+    id: "deklarium",
+    title: "Деклариум",
+    description:
+      "Считает НДФЛ по криптовалюте и зарубежному брокерскому счёту и собирает готовую 3-НДФЛ. Расчёт бесплатный, платно только документы.",
+    ctaLabel: "Посчитать налог",
+    url: "https://deklarium.ru/",
+    advertiser: "ИП Яцунов Григорий Владимирович",
+    selfPromo: true,
+  },
   {
     id: "tbank-invest",
     title: "Т-Инвестиции",

@@ -19,7 +19,7 @@ import {
   truncateForDescription,
 } from "@/lib/seo";
 import { AUTHOR_BIO, AUTHOR_NAME } from "@/lib/author";
-import { SPONSOR_OFFERS, offerForKey } from "@/lib/sponsors";
+import { offerForArticleSlug, offerForKey } from "@/lib/sponsors";
 import { TOPICS, topicForSlug } from "@/lib/content/evergreen-topics";
 import type { Article } from "@/lib/types";
 
@@ -70,7 +70,7 @@ export default async function ArticlePage({ params }: PageParams) {
   const display = localizeArticle(article, locale);
   const isSponsored = article.kind === "sponsored";
   const isGuide = article.kind === "evergreen";
-  const sponsoredOffer = isSponsored ? SPONSOR_OFFERS.find((o) => o.id === "tbank-autofollow") : undefined;
+  const sponsoredOffer = isSponsored ? offerForArticleSlug(article.slug) : undefined;
   const topic = isGuide ? TOPICS.find((tp) => tp.id === topicForSlug(article.slug)) : undefined;
   const related = await relatedGuides(article);
 
@@ -118,13 +118,21 @@ export default async function ArticlePage({ params }: PageParams) {
       </div>
 
       <div className="flex flex-col gap-4">
-        {isSponsored && (
-          <div className="rounded-xl border border-warning/40 bg-warning-soft px-4 py-3 text-sm text-foreground/85">
-            <span className="font-semibold">Партнёрский материал · Реклама.</span> Мы получаем
-            вознаграждение, если вы воспользуетесь предложением по ссылкам в этой статье.
-            {sponsoredOffer ? ` Рекламодатель: ${sponsoredOffer.advertiser}.` : ""}
-          </div>
-        )}
+        {isSponsored &&
+          (sponsoredOffer?.selfPromo ? (
+            <div className="rounded-xl border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-foreground/85">
+              <span className="font-semibold">Материал о собственном сервисе.</span>{" "}
+              {sponsoredOffer.title} — проект того же владельца, что и этот сайт (
+              {sponsoredOffer.advertiser}). Комиссию от третьих лиц мы за него не получаем, но
+              заинтересованы в том, чтобы вы им воспользовались, — учитывайте это при чтении.
+            </div>
+          ) : (
+            <div className="rounded-xl border border-warning/40 bg-warning-soft px-4 py-3 text-sm text-foreground/85">
+              <span className="font-semibold">Партнёрский материал · Реклама.</span> Мы получаем
+              вознаграждение, если вы воспользуетесь предложением по ссылкам в этой статье.
+              {sponsoredOffer ? ` Рекламодатель: ${sponsoredOffer.advertiser}.` : ""}
+            </div>
+          ))}
         <h1 className="font-serif text-3xl sm:text-[40px] font-semibold leading-[1.15] tracking-tight">
           {display.title}
         </h1>

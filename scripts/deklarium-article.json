@@ -1,0 +1,312 @@
+{
+  "kind": "sponsored",
+  "market": null,
+  "period": null,
+  "slug": "deklarium-nalog-s-kriptovalyuty",
+  "relatedTickers": ["bitcoin", "ethereum"],
+  "title": {
+    "ru": "Деклариум: налог с криптовалюты и готовая 3-НДФЛ без ручных расчётов",
+    "en": "Deklarium: crypto tax and a ready-to-file Russian return, without the manual work"
+  },
+  "dek": {
+    "ru": "Как сервис считает НДФЛ по криптовалюте и зарубежному брокерскому счёту: две базы, ФИФО, курс ЦБ, коридор котировки и XML для личного кабинета.",
+    "en": "How the service computes Russian income tax on crypto and foreign brokerage accounts, and produces the XML the tax office expects."
+  },
+  "body": [
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Посчитать налог с криптовалюты руками можно. Вопрос в том, сколько это займёт и сколько ошибок останется. Деклариум — сервис, который делает этот расчёт за вас и отдаёт готовый XML декларации 3-НДФЛ для личного кабинета налогоплательщика. Расчёт бесплатный и без регистрации; платить нужно только за документы, и только когда вы увидели сумму и она вас устроила.",
+        "en": "You can compute crypto tax by hand. The question is how long it takes and how many mistakes survive. Deklarium does the computation for you and hands back the XML file the Russian tax office's personal cabinet expects. The computation is free and needs no account; you pay only for the documents, and only once you have seen the number."
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Почему руками это почти нереально",
+        "en": "Why doing it by hand barely works"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Проблема не в одной формуле, а в том, что их несколько и они наслаиваются друг на друга. Каждое выбытие нужно оценить по правилам НК, найти для него себестоимость по ФИФО, взять рыночную котировку на дату, пересчитать доллары в рубли по курсу ЦБ того же дня и проверить, попадает ли цена сделки в допустимый коридор. Умножьте на число операций за год.",
+        "en": "The difficulty is not one formula but several stacked on top of each other. Every disposal has to be valued under the tax code, matched to a cost basis by FIFO, priced against the market quote for that date, converted from dollars at the central bank rate for the same day, and checked against the permitted price corridor. Multiply by a year of transactions."
+      }
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": {
+        "ru": [
+          "Выгрузки у каждой площадки свои, а Bybit к тому же отдаёт историю кусками по три месяца — файлов набирается с десяток.",
+          "ФИФО нужно вести по каждой монете отдельно, а покупки и продажи размазаны по разным биржам.",
+          "Курс ЦБ — свой на каждую дату операции, и его нужно подставить в каждую строку.",
+          "Обмен одной монеты на другую — это тоже выбытие, хотя рублей вы не видели.",
+          "Сделки и майнинг попадают в разные налоговые базы с разными ставками."
+        ],
+        "en": [
+          "Every venue exports in its own format, and Bybit hands out history in three-month chunks — you end up with a dozen files.",
+          "FIFO has to be tracked per coin, while buys and sells are spread across different exchanges.",
+          "The central bank rate differs for every transaction date and has to be substituted into every row.",
+          "Swapping one coin for another is a disposal too, even though no rubles were involved.",
+          "Trading and mining land in different tax bases with different rates."
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Что делает сервис",
+        "en": "What the service does"
+      }
+    },
+    {
+      "type": "list",
+      "ordered": true,
+      "items": {
+        "ru": [
+          "Вы выгружаете историю операций с каждой площадки за год и перетаскиваете файлы в форму. Можно несколько файлов сразу, повторы отбросятся сами.",
+          "Сервис распознаёт формат. Если колонки незнакомые, он покажет их и спросит, где дата, пара, направление и количество, — а не откажется работать.",
+          "Считает налог по правилам НК и показывает все оговорки: видно, где данных не хватило и что было принято по умолчанию.",
+          "Отдаёт регистр сделок, пояснительную записку и XML декларации, проверенный по официальной схеме ФНС.",
+          "Вы загружаете XML в личный кабинет: «Доходы и вычеты» → «Декларации» → «Загрузить готовую»."
+        ],
+        "en": [
+          "Export the transaction history from each venue for the year and drop the files into the form. Several files at once is fine; duplicates are discarded automatically.",
+          "The service recognises the format. If the columns are unfamiliar it shows them and asks which is the date, the pair, the direction and the amount, instead of refusing to work.",
+          "It computes the tax under the Russian tax code and lists every caveat: where data was missing and what was assumed.",
+          "It returns a transaction register, an explanatory note and the declaration XML, validated against the tax office's official schema.",
+          "You upload the XML in the personal cabinet under Income and deductions → Declarations → Upload a prepared file."
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "По каким правилам считается",
+        "en": "The rules it applies"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Это не «примерная прикидка». Ниже — те самые нормы, по которым сервис считает каждую строку, и их стоит знать даже если вы считаете сами.",
+        "en": "This is not a rough estimate. Below are the rules the service applies to every row — worth knowing even if you compute it yourself."
+      }
+    },
+    {
+      "type": "table",
+      "caption": {
+        "ru": "Правила расчёта НДФЛ по цифровой валюте, которые применяет сервис.",
+        "en": "The crypto income-tax rules the service applies."
+      },
+      "columns": {
+        "ru": ["Правило", "Как применяется"],
+        "en": ["Rule", "How it applies"]
+      },
+      "rows": {
+        "ru": [
+          ["Что считается доходом", "Продажа, обмен одной криптовалюты на другую, оплата товара, дарение. Перевод между своими кошельками событием не считается"],
+          ["Минимум 80% котировки", "Если цена сделки ниже, доход поднимается до 80% рыночной котировки на дату (п. 3 ст. 282.3 НК)"],
+          ["Потолок 120% котировки", "Расход на приобретение выше этой границы срезается"],
+          ["Курс", "Котировка в долларах с иностранной биржи, пересчёт по курсу ЦБ на дату операции"],
+          ["Себестоимость", "ФИФО: первым выбывает раньше приобретённое (п. 4 ст. 282.3 НК)"],
+          ["Убыток", "Не переносится на другие базы и не уменьшает доход от майнинга"],
+          ["Чего нет", "Освобождение за три года владения и вычет 250 000 ₽ к цифровой валюте не применяются"]
+        ],
+        "en": [
+          ["What counts as income", "Selling, swapping one coin for another, paying for goods, gifting. Moving between your own wallets is not an event"],
+          ["Floor of 80% of quote", "If the trade price is lower, income is raised to 80% of the market quote for that date"],
+          ["Cap of 120% of quote", "Acquisition cost above that line is trimmed"],
+          ["Exchange rate", "Dollar quote from a foreign exchange, converted at the central bank rate for the transaction date"],
+          ["Cost basis", "FIFO: the earliest acquired is disposed of first"],
+          ["Losses", "Do not carry to other bases and do not reduce mining income"],
+          ["What does not apply", "The three-year holding exemption and the 250,000 ruble deduction do not apply to digital currency"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Две базы: сделки отдельно, майнинг отдельно",
+        "en": "Two bases: trading and mining are separate"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Это место, где чаще всего ошибаются при самостоятельном расчёте. Доход от сделок идёт кодом 035 со ставками 13 и 15 процентов. Доход от майнинга идёт кодом 027 в основную налоговую базу — вместе с зарплатой, а значит по прогрессивной шкале со ставками до 22 процентов. Сервис считает их раздельно и спрашивает у вас прочие доходы за год, потому что именно от них зависит, какая ставка применится.",
+        "en": "This is where hand calculations most often go wrong. Trading income uses code 035 at 13 and 15 percent. Mining income uses code 027 and lands in the main tax base together with salary, on the progressive scale up to 22 percent. The service keeps them apart and asks for your other income for the year, because that is what decides which rate applies."
+      }
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": {
+        "ru": "Почему сервис спрашивает про зарплату",
+        "en": "Why it asks about your salary"
+      },
+      "text": {
+        "ru": "Ставка по майнингу зависит от размера основной базы, а ставка по сделкам — от суммы прочих доходов по п. 1.1 ст. 224. Без этих двух чисел посчитать корректно нельзя, поэтому форма просит их до расчёта, а не после."
+      , "en": "The mining rate depends on the size of your main tax base, and the trading rate on your other income. Without those two numbers the result cannot be correct, so the form asks for them before computing, not after."
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Зарубежный брокерский счёт — та же история",
+        "en": "A foreign brokerage account is the same story"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "По счёту у иностранного брокера налогового агента нет: считает и подаёт сам налогоплательщик. Сервис разбирает отчёт брокера, считает НДФЛ по статье 214.1 и собирает декларацию с приложениями 2 и 8, включая зачёт налога, уже удержанного за границей.",
+        "en": "A foreign broker is not your withholding agent: you compute and file yourself. The service parses the broker report, computes the tax under article 214.1 and assembles the return with the required appendices, including credit for tax already withheld abroad."
+      }
+    },
+    {
+      "type": "callout",
+      "variant": "example",
+      "title": {
+        "ru": "Курсовая прибыль: откуда налог там, где нет прибыли",
+        "en": "FX gain: tax where there was no profit"
+      },
+      "text": {
+        "ru": "Вы купили бумагу за 1000 долларов и продали за те же 1000 долларов. В долларах результат нулевой.\nНо доход считается по курсу ЦБ на дату продажи, а расход — по курсу на дату покупки.\nЕсли за это время доллар подорожал с 80 до 95 рублей, в рублях выходит 95 000 дохода против 80 000 расхода — и 15 000 рублей налоговой базы.\nСервис считает это сам и показывает, откуда взялась сумма."
+      , "en": "You bought a security for $1,000 and sold it for the same $1,000. In dollars the result is zero.\nBut income is converted at the rate on the sale date and cost at the rate on the purchase date.\nIf the dollar moved from 80 to 95 rubles in between, that is 95,000 rubles of income against 80,000 of cost — and a taxable base of 15,000 rubles.\nThe service computes this and shows where the number came from."
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Кошельки в иностранных системах",
+        "en": "Wallets in foreign systems"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Готовится обязанность уведомлять ФНС о кошельках в иностранных системах в течение месяца после открытия. В кабинете есть реестр: вид кошелька, площадка, адрес, даты открытия и закрытия. Сервис сам считает месячный срок, подсвечивает приближающиеся и готовит текст уведомления.",
+        "en": "An obligation to notify the tax office about wallets in foreign systems within a month of opening is being introduced. The cabinet keeps a register — wallet type, venue, address, opening and closing dates — counts the one-month deadline, flags the ones coming due and drafts the notification text."
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Что происходит с вашими файлами",
+        "en": "What happens to your files"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Выгрузка с биржи — это полная история ваших сделок. Поэтому здесь позиция жёсткая: исходные файлы не сохраняются никогда, ни без входа, ни в кабинете. Файл живёт в памяти обработчика одного запроса и исчезает вместе с ответом. Есть тест, который проверяет это буквально: после полного цикла расчёта в рабочей папке не появилось ни одного файла.",
+        "en": "An exchange export is your complete trading history, so the rule here is strict: source files are never stored, with or without an account. The file lives in the memory of a single request handler and disappears with the response. A test checks this literally — after a full computation cycle, not one file has appeared on disk."
+      }
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": {
+        "ru": [
+          "Без входа не сохраняется вообще ничего: между шагами ездит подписанный токен с настройками расчёта — ни сделок, ни ИНН.",
+          "В кабинете хранятся только итоги расчёта, готовые документы и реквизиты титульного листа, зашифрованные ключом, которого нет в базе. Шифруется в том числе имя файла декларации: оно содержит ИНН.",
+          "База с персональными данными находится в России — этого требует закон."
+        ],
+        "en": [
+          "Without an account nothing is stored at all: a signed token carrying only computation settings travels between steps — no trades, no tax ID.",
+          "The cabinet stores only computation results, finished documents and the cover-sheet details, encrypted with a key that is not in the database. That includes the declaration file name, which contains the tax ID.",
+          "The database holding personal data sits in Russia, as the law requires."
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Сколько стоит",
+        "en": "What it costs"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Ступень определяется числом выбытий за год — продаж, обменов и трат. Покупки не считаются: они не создают дохода. Поэтому две сотни покупок и три продажи — это самый дешёвый тариф. Сервис сам предложит подходящий, считать заранее ничего не нужно.",
+        "en": "The tier is set by the number of disposals in the year — sales, swaps and spends. Purchases do not count, because they create no income. So two hundred buys and three sells is the cheapest tier. The service picks the right one for you."
+      }
+    },
+    {
+      "type": "table",
+      "caption": {
+        "ru": "Расчёт налога бесплатен и без регистрации на любом тарифе. Платно — только документы.",
+        "en": "Computing the tax is free and account-free on every tier. You pay only for documents."
+      },
+      "columns": {
+        "ru": ["Тариф", "Цена за год", "Ограничение"],
+        "en": ["Tier", "Price per year", "Limit"]
+      },
+      "rows": {
+        "ru": [
+          ["Расчёт", "0 ₽", "без ограничений, но без выгрузки документов"],
+          ["Декларация", "690 ₽", "до 100 выбытий за год"],
+          ["Декларация Про", "1 490 ₽", "до 1000 выбытий за год"],
+          ["Декларация Макс", "2 900 ₽", "без ограничения"]
+        ],
+        "en": [
+          ["Computation", "0 ₽", "unlimited, but no document download"],
+          ["Declaration", "690 ₽", "up to 100 disposals per year"],
+          ["Declaration Pro", "1 490 ₽", "up to 1000 disposals per year"],
+          ["Declaration Max", "2 900 ₽", "no limit"]
+        ]
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Оплата привязана к налоговому периоду, а не к конкретному расчёту. Если после оплаты вы найдёте недостающую выгрузку и пересчитаете год заново, новые документы будут бесплатно. Ошибка в выгрузке не должна стоить второй оплаты.",
+        "en": "Payment is tied to the tax period, not to one computation. If you find a missing export afterwards and recompute the year, the new documents cost nothing. A mistake in an export should not cost a second payment."
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Чего сервис не делает",
+        "en": "What the service does not do"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Он не подаёт декларацию за вас и не имеет доступа к вашему личному кабинету — XML вы загружаете сами. Он не даёт налоговых консультаций и не оптимизирует налог: считает по нормам, а не ищет схемы. И он не заменяет налогового консультанта в спорной ситуации — например, если происхождение части монет вы подтвердить не можете.",
+        "en": "It does not file for you and has no access to your tax cabinet — you upload the XML yourself. It does not give tax advice and does not optimise: it applies the rules rather than looking for schemes. And it does not replace a tax adviser in a contested situation — for instance when you cannot document where some of the coins came from."
+      }
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": {
+        "ru": "Про версию формата декларации",
+        "en": "About the declaration format version"
+      },
+      "text": {
+        "ru": "Версия формата зависит от даты подачи, а не от отчётного года. Версия 5.21 обязательна с 1 сентября 2026, но XSD-схему в открытом доступе ФНС на момент публикации ещё не выложила. В такой ситуации файл формируется в новой версии, а структура проверяется по последней доступной схеме — и сервис говорит об этом прямо в результате, вместо того чтобы молча пропустить проверку."
+      , "en": "The format version depends on the filing date, not the reporting year. Version 5.21 is mandatory from 1 September 2026, but at the time of writing the tax office had not yet published the XSD schema. In that case the file is built in the new version while its structure is validated against the latest available schema — and the service says so in the result rather than skipping the check quietly."
+      }
+    },
+    {
+      "type": "heading",
+      "text": {
+        "ru": "Коротко",
+        "en": "In short"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": {
+        "ru": "Если у вас за год было несколько десятков операций с криптовалютой или счёт у иностранного брокера, ручной расчёт займёт вечер и оставит вопросы. Деклариум считает по нормам НК, показывает, откуда взялась каждая сумма, и отдаёт готовый файл для личного кабинета. Посмотреть свою сумму можно бесплатно и без регистрации — решение платить принимается уже после того, как вы её увидели.",
+        "en": "If your year included a few dozen crypto transactions or a foreign brokerage account, computing by hand will take an evening and leave questions. Deklarium applies the tax code, shows where each number came from, and returns a file ready for the tax cabinet. You can see your own number for free and without an account — the decision to pay comes after that."
+      }
+    }
+  ]
+}
