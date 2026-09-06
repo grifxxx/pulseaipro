@@ -115,6 +115,8 @@ interface UIStrings {
   aboutNotAdviceBody: string;
   aboutSourcesTitle: string;
   aboutSources: string[];
+  aboutAuthorTitle: string;
+  aboutAuthorBody: string[];
   faqTitle: string;
   faqSubtitle: string;
   faqItems: FaqItem[];
@@ -247,6 +249,12 @@ const STRINGS: Record<Locale, UIStrings> = {
       "Котировки и трендовые монеты крипторынка — CoinGecko",
       "Общие новости — RSS-ленты CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, РБК, Ведомости, ТАСС",
       "Синтез сводок — OpenAI, на основе только перечисленных источников",
+    ],
+    aboutAuthorTitle: "Кто ведёт проект",
+    aboutAuthorBody: [
+      "Проект создал Григорий Владимирович Яцунов — автор алгоритма, который стоит за публикациями на сайте.",
+      "Статьи в блоге пишет нейросеть. Ей заранее задано, о чём писать, по какому плану и каким требованиям должен отвечать материал: прямой ответ на вопрос в первом абзаце, разбор с числовым примером, никаких призывов покупать или продавать. Отбор тем, постановка задачи и решение о публикации — за человеком, сами формулировки — машинные.",
+      "Мы пишем об этом прямо, а не прячем за вымышленным автором: читатель должен понимать, что перед ним, и сам решать, насколько этому доверять. По любым вопросам к материалам пишите на почту, указанную в подвале сайта.",
     ],
     faqTitle: "Вопросы и ответы",
     faqSubtitle: "Коротко о том, как устроен PulseAiPro и как им пользоваться.",
@@ -431,6 +439,12 @@ const STRINGS: Record<Locale, UIStrings> = {
       "Crypto prices and trending coins — CoinGecko",
       "General news — RSS feeds from CoinDesk, Cointelegraph, Decrypt, The Block, CryptoSlate, NewsBTC, Reuters, Yahoo Finance, MarketWatch, CNBC, Investing.com, Business Insider, Interfax, Smart-lab, Finam, RBC, Vedomosti, TASS",
       "Note synthesis — OpenAI, based only on the sources listed above",
+    ],
+    aboutAuthorTitle: "Who runs this project",
+    aboutAuthorBody: [
+      "The project was built by Grigoriy Vladimirovich Yatsunov, who wrote the algorithm behind everything published here.",
+      "The blog articles are written by a neural network. What it writes about, the outline it follows and the standards it has to meet are set in advance: answer the question in the opening paragraph, work through a numbered example, never tell anyone to buy or sell. Choosing the topics, setting the task and deciding what goes live is a person's job; the wording itself is the machine's.",
+      "We say so plainly rather than hiding behind an invented author: you should know what you are reading and judge for yourself how much to trust it. Questions about any article go to the email in the site footer.",
     ],
     faqTitle: "Frequently asked questions",
     faqSubtitle: "A short explainer on how PulseAiPro works.",

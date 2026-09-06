@@ -1,5 +1,5 @@
 import type { ArticleKind } from "@/lib/types";
-import { authorJsonLd } from "@/lib/author";
+import { creatorJsonLd } from "@/lib/author";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
   /\/$/,
@@ -97,9 +97,10 @@ interface BlogPostingInput {
   imageUrl: string;
   datePublished: string;
   url: string;
-  /** True for pieces written under the site author's byline. Sponsored placements keep the
-   * organisation as author — attributing an ad to a named person would be a false signal. */
-  authored?: boolean;
+  /** True for the model-written evergreen guides. They credit the organisation as author —
+   * the text is machine-written, so a human name in that slot would be false — and name the
+   * person who built and runs the pipeline as creator. */
+  machineWritten?: boolean;
 }
 
 export function blogPostingJsonLd(input: BlogPostingInput) {
@@ -113,12 +114,11 @@ export function blogPostingJsonLd(input: BlogPostingInput) {
     dateModified: input.datePublished,
     url: input.url,
     mainEntityOfPage: input.url,
-    author: input.authored
-      ? authorJsonLd(SITE_URL)
-      : {
-          "@type": "Organization",
-          name: SITE_NAME,
-        },
+    author: {
+      "@type": "Organization",
+      name: SITE_NAME,
+    },
+    ...(input.machineWritten ? { creator: creatorJsonLd(SITE_URL) } : {}),
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,

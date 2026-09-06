@@ -15,7 +15,7 @@ import {
   SITE_URL,
   truncateForDescription,
 } from "@/lib/seo";
-import { AUTHOR_NAME, AUTHOR_TAGLINE } from "@/lib/author";
+import { BYLINE, CREATOR_NAME } from "@/lib/author";
 import { SPONSOR_OFFERS, offerForKey } from "@/lib/sponsors";
 
 export const revalidate = 0;
@@ -52,7 +52,7 @@ export default async function ArticlePage({ params }: PageParams) {
 
   const display = localizeArticle(article, locale);
   const isSponsored = article.kind === "sponsored";
-  const isAuthored = article.kind === "evergreen";
+  const isGuide = article.kind === "evergreen";
   const sponsoredOffer = isSponsored ? SPONSOR_OFFERS.find((o) => o.id === "tbank-autofollow") : undefined;
   const jsonLd = blogPostingJsonLd({
     headline: display.title,
@@ -60,7 +60,7 @@ export default async function ArticlePage({ params }: PageParams) {
     imageUrl: display.coverImageUrl,
     datePublished: display.publishedAt,
     url: `${SITE_URL}/blog/${display.slug}`,
-    authored: isAuthored,
+    machineWritten: isGuide,
   });
   const breadcrumbs = breadcrumbJsonLd([
     { name: t.navFeed, url: SITE_URL },
@@ -99,12 +99,16 @@ export default async function ArticlePage({ params }: PageParams) {
         )}
         <h1 className="text-3xl font-bold tracking-tight">{display.title}</h1>
         <p className="text-base text-muted">{display.dek}</p>
-        {isAuthored && (
+        {isGuide && (
           <div className="text-sm text-muted">
+            {BYLINE[locale === "ru" ? "ru" : "en"].writtenBy}
+            <span className="text-muted/70">
+              {" · "}
+              {BYLINE[locale === "ru" ? "ru" : "en"].creditLabel}:{" "}
+            </span>
             <Link href="/about" className="font-medium text-foreground hover:text-accent transition-colors">
-              {AUTHOR_NAME}
+              {CREATOR_NAME}
             </Link>
-            <span className="text-muted/70"> — {AUTHOR_TAGLINE}</span>
           </div>
         )}
         <div className="flex items-center justify-between gap-3 flex-wrap">

@@ -6,9 +6,9 @@ import { resolveLocale, getStrings } from "@/lib/i18n";
 // separately from the on-page heading/intro so the search snippet can be clear and
 // keyword-rich without cluttering the on-site copy.
 export const metadata: Metadata = {
-  title: "Как работает PulseAiPro — сервис новостей акций и крипты",
+  title: "О проекте PulseAiPro — кто пишет статьи и на каких данных",
   description:
-    "PulseAiPro три раза в день собирает новости и рыночные данные по акциям США, российским акциям и криптовалютам, а ИИ готовит короткую сводку: что произошло, почему это важно и какие есть риски.",
+    "Разборы на PulseAiPro пишет нейросеть по заданию Григория Яцунова, создателя алгоритма. Рассказываем, как устроен процесс, откуда берутся данные и почему мы говорим об этом прямо.",
   alternates: { canonical: "/about" },
 };
 
@@ -29,6 +29,11 @@ export default async function AboutPage() {
         </h2>
         <p>{t.aboutNotAdviceBody}</p>
       </div>
+
+      <h2 className="text-lg font-semibold text-foreground mt-2">{t.aboutAuthorTitle}</h2>
+      {t.aboutAuthorBody.map((paragraph, i) => (
+        <p key={i}>{paragraph}</p>
+      ))}
 
       <h2 className="text-lg font-semibold text-foreground mt-2">{t.aboutSourcesTitle}</h2>
       <ul className="flex flex-col gap-1.5">
