@@ -6,15 +6,18 @@ import { LEGAL_ENTITY_NAME, LEGAL_INN, LEGAL_OGRNIP } from "@/lib/legal";
 export function SiteFooter({ locale }: { locale: Locale }) {
   const t = getStrings(locale);
   return (
-    <footer className="border-t border-border px-4 sm:px-6 py-8 text-xs text-muted flex flex-col gap-4">
+    <footer className="border-t border-border px-4 sm:px-6 py-10 text-xs text-muted flex flex-col gap-5">
       <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="max-w-md">{t.footerNote}</p>
-        <div className="flex gap-4">
-          <Link href="/" className="hover:text-foreground transition-colors">
-            {t.navFeed}
-          </Link>
+        <div className="flex flex-wrap gap-4">
           <Link href="/blog" className="hover:text-foreground transition-colors">
             {t.navBlog}
+          </Link>
+          <Link href="/feed" className="hover:text-foreground transition-colors">
+            {t.navFeed}
+          </Link>
+          <Link href="/faq" className="hover:text-foreground transition-colors">
+            {t.navFaq}
           </Link>
           <Link href="/about" className="hover:text-foreground transition-colors">
             {t.navAbout}
@@ -24,11 +27,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           </a>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-border/60 pt-4">
+      <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-border/60 pt-5">
         <p className="max-w-md text-muted/70">
           {LEGAL_ENTITY_NAME} · ОГРНИП {LEGAL_OGRNIP} · ИНН {LEGAL_INN}
         </p>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <Link href="/privacy" className="hover:text-foreground transition-colors">
             Политика конфиденциальности
           </Link>

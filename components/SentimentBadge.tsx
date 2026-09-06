@@ -2,17 +2,17 @@ import type { Locale, Sentiment } from "@/lib/types";
 import { getStrings } from "@/lib/i18n";
 
 const STYLES: Record<Sentiment, string> = {
-  bullish: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  bearish: "bg-rose-500/10 text-rose-700 dark:text-rose-400",
-  neutral: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400",
-  mixed: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  bullish: "bg-positive/10 text-positive",
+  bearish: "bg-negative/10 text-negative",
+  neutral: "bg-muted/10 text-muted",
+  mixed: "bg-warning/10 text-warning",
 };
 
 const DOT: Record<Sentiment, string> = {
-  bullish: "bg-emerald-500",
-  bearish: "bg-rose-500",
-  neutral: "bg-zinc-400",
-  mixed: "bg-amber-500",
+  bullish: "bg-positive",
+  bearish: "bg-negative",
+  neutral: "bg-muted/60",
+  mixed: "bg-warning",
 };
 
 export function SentimentBadge({ sentiment, locale }: { sentiment: Sentiment; locale: Locale }) {

@@ -22,7 +22,7 @@ function TickerItem({ note }: { note: DisplayAttentionNote }) {
         {note.priceSnapshot?.price.toLocaleString()}
       </span>
       {change != null && (
-        <span className={isUp ? "text-emerald-400" : "text-rose-400"}>
+        <span className={isUp ? "text-positive" : "text-negative"}>
           {isUp ? "▲" : "▼"} {Math.abs(change).toFixed(2)}%
         </span>
       )}

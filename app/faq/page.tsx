@@ -25,7 +25,7 @@ export default async function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h1 className="text-3xl font-bold tracking-tight text-foreground">{t.faqTitle}</h1>
+      <h1 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">{t.faqTitle}</h1>
       <p className="text-sm text-muted">{t.faqSubtitle}</p>
 
       <div className="flex flex-col gap-2 mt-2">

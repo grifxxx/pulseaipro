@@ -125,3 +125,51 @@ export const getArticleBySlug = cache(async (slug: string): Promise<Article | nu
   if (error) throw new Error(`getArticleBySlug failed: ${error.message}`);
   return data ? rowToArticle(data) : null;
 });
+
+/** All articles of the given kinds, newest first. The guide listings need every evergreen piece
+ * at once (there are a few dozen at most), and the article page needs the same set to pick
+ * related guides — one cached query serves both. */
+export const getArticlesByKinds = cache(async (kinds: ArticleKind[]): Promise<Article[]> => {
+  const db = getPublicClient();
+  const { data, error } = await db
+    .from("articles")
+    .select("*")
+    .in("kind", kinds)
+    .order("published_at", { ascending: false });
+  if (error) throw new Error(`getArticlesByKinds failed: ${error.message}`);
+  return (data ?? []).map(rowToArticle);
+});
+
+/** Paged variant for the archive of the old daily/humor/retrospective posts — there are a couple
+ * of hundred of those, so they stay paginated. Same out-of-range clamping as getArticlesPage. */
+export const getArticlesPageByKinds = cache(
+  async (kinds: ArticleKind[], page: number, pageSize: number): Promise<ArticlesPage> => {
+    const db = getPublicClient();
+
+    const { count, error: countError } = await db
+      .from("articles")
+      .select("id", { count: "exact", head: true })
+      .in("kind", kinds);
+    if (countError) throw new Error(`getArticlesPageByKinds failed: ${countError.message}`);
+
+    const totalCount = count ?? 0;
+    if (totalCount === 0) {
+      return { articles: [], totalCount: 0, page: 1, pageSize };
+    }
+
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const clampedPage = Math.min(Math.max(1, page), totalPages);
+    const from = (clampedPage - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error } = await db
+      .from("articles")
+      .select("*")
+      .in("kind", kinds)
+      .order("published_at", { ascending: false })
+      .range(from, to);
+    if (error) throw new Error(`getArticlesPageByKinds failed: ${error.message}`);
+
+    return { articles: (data ?? []).map(rowToArticle), totalCount, page: clampedPage, pageSize };
+  }
+);

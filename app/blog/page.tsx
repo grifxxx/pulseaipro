@@ -1,94 +1,88 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
-import { getArticlesPage } from "@/lib/db/articles-queries";
-import { ArticleCard } from "@/components/ArticleCard";
-import { SponsorCard } from "@/components/SponsorCard";
-import { BlogPagination } from "@/components/BlogPagination";
+import Link from "next/link";
+import { getArticlesByKinds } from "@/lib/db/articles-queries";
+import { GuideSections, GuideRow } from "@/components/GuideList";
 import { resolveLocale, getStrings, localizeArticle } from "@/lib/i18n";
-import { interleaveSponsors } from "@/lib/sponsors";
 import type { Article } from "@/lib/types";
 
 export const revalidate = 0;
 
-// 11 articles + 1 sponsor card (inserted after the 6th) = 12 cells, which fills the 3-column
-// grid to exactly 4 full rows instead of leaving a near-empty trailing row.
-const PAGE_SIZE = 11;
-const SPONSOR_EVERY_N = 6;
-
-// SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
-// separately from the on-page heading/subtitle so the search snippet can be clear and
-// keyword-rich without cluttering the on-site copy.
+// SEO title/description pinned to Russian (see the comment in app/layout.tsx).
 export const metadata: Metadata = {
-  title: "Блог: новости и обзоры рынка акций и криптовалют",
+  title: "Разборы: налоги, ИИС, облигации, биржа и криптовалюты простыми словами",
   description:
-    "Ежедневные статьи по акциям США, российским акциям и криптовалютам — с обложкой, графиком и разбором ключевых активов дня. Публикуются автоматически на основе новостей.",
+    "Справочные разборы для частного инвестора: ИИС-3 и вычеты, ОФЗ, шорт и биржевой стакан, дивидендная отсечка, налог на криптовалюту, стейкинг. С расчётами и таблицами.",
   alternates: { canonical: "/blog" },
 };
 
-export default async function BlogPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  const { page: pageParam } = await searchParams;
-  const requestedPage = Math.max(1, Number(pageParam) || 1);
-
+/** The guides, all of them, grouped by topic. The old daily recaps are deliberately not here:
+ * mixing ~170 noindexed posts into this listing buried the guides and spent the page's link
+ * weight on URLs we have asked search engines to ignore. They live in /blog/archive. */
+export default async function BlogPage() {
   const headersList = await headers();
   const locale = resolveLocale(headersList.get("accept-language"));
   const t = getStrings(locale);
 
-  let articles: Article[] = [];
-  let totalPages = 1;
-  let currentPage = requestedPage;
+  let guides: Article[] = [];
+  let sponsored: Article[] = [];
   let loadError: string | null = null;
 
   try {
-    const result = await getArticlesPage(requestedPage, PAGE_SIZE);
-    // Sponsored (RU-only financial offer) content is filtered out of the EN blog —
-    // the count/pagination stays server-computed, so an EN page may show one fewer card.
-    articles = locale === "ru" ? result.articles : result.articles.filter((a) => a.kind !== "sponsored");
-    totalPages = Math.max(1, Math.ceil(result.totalCount / PAGE_SIZE));
-    currentPage = result.page;
+    const articles = await getArticlesByKinds(["evergreen", "sponsored"]);
+    guides = articles.filter((a) => a.kind === "evergreen");
+    // Sponsored (RU-only financial offers) content is not shown to the EN audience at all.
+    sponsored = locale === "ru" ? articles.filter((a) => a.kind === "sponsored") : [];
   } catch (err) {
     loadError = err instanceof Error ? err.message : String(err);
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.blogTitle}</h1>
-        <p className="text-sm sm:text-base text-muted max-w-xl">{t.blogSubtitle}</p>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 flex flex-col gap-12">
+      <div className="flex flex-col gap-3 max-w-3xl">
+        <h1 className="font-serif text-4xl sm:text-5xl font-semibold leading-[1.1] tracking-tight">
+          {t.blogTitle}
+        </h1>
+        <p className="text-base sm:text-lg leading-relaxed text-foreground/75">{t.blogSubtitle}</p>
       </div>
 
       {loadError && (
-        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 text-rose-700 dark:text-rose-300 text-sm p-4">
+        <div className="rounded-xl border border-negative/30 bg-negative/5 text-negative text-sm p-4">
           {t.loadErrorPrefix} ({loadError}). {t.loadErrorSuffix}
         </div>
       )}
 
-      {!loadError && articles.length === 0 && (
+      {!loadError && guides.length === 0 && (
         <div className="rounded-xl border border-border bg-surface text-sm p-6 text-muted">
           {t.blogEmptyState}
         </div>
       )}
 
-      {!loadError && articles.length > 0 && (
-        <>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {(locale === "ru"
-              ? interleaveSponsors(articles, SPONSOR_EVERY_N, currentPage)
-              : articles.map((item) => ({ kind: "item" as const, item }))
-            ).map((cell, i) =>
-              cell.kind === "item" ? (
-                <ArticleCard key={cell.item.id} article={localizeArticle(cell.item, locale)} locale={locale} />
-              ) : (
-                <SponsorCard key={`sponsor-${i}`} offer={cell.offer} />
-              )
-            )}
-          </div>
-          <BlogPagination currentPage={currentPage} totalPages={totalPages} />
-        </>
+      {!loadError && guides.length > 0 && (
+        <GuideSections articles={guides.map((a) => localizeArticle(a, locale))} locale={locale} />
       )}
+
+      {sponsored.length > 0 && (
+        <section className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)] md:gap-10">
+          <div className="flex flex-col gap-1.5">
+            <h2 className="font-serif text-2xl font-semibold tracking-tight">{t.sponsoredGroupTitle}</h2>
+            <p className="text-sm leading-relaxed text-muted">
+              Отмечены и отделены от разборов, чтобы их нельзя было спутать.
+            </p>
+          </div>
+          <ul className="flex flex-col">
+            {sponsored.map((article) => (
+              <GuideRow key={article.id} article={localizeArticle(article, locale)} locale={locale} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <div className="border-t border-border pt-6">
+        <Link href="/blog/archive" className="text-sm text-muted hover:text-foreground transition-colors">
+          {t.blogArchiveLink} →
+        </Link>
+      </div>
     </div>
   );
 }

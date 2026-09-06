@@ -1,37 +1,57 @@
 @import "tailwindcss";
 
+/* Editorial palette: warm paper, ink text, one teal accent for the "pulse". Finance content
+   under a named author should read like a reference publication, not a trading terminal. */
 :root {
-  --background: #f7f7f8;
+  --background: #faf8f3;
   --surface: #ffffff;
-  --surface-hover: #fafafa;
-  --foreground: #16161a;
-  --muted: #6b7280;
-  --border: #e5e5ea;
-  --accent: #4f46e5;
+  --surface-hover: #f4f1ea;
+  --foreground: #1b1a17;
+  --muted: #6f6a60;
+  --border: #e6e1d6;
+  --accent: #0f6e68;
   --accent-foreground: #ffffff;
+  --accent-soft: #e4f1ef;
+  --positive: #1f7a4d;
+  --negative: #b3402f;
+  --warning: #b7791f;
+  --warning-soft: #fbf1dc;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
   --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-source-serif);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0c;
-    --surface: #131316;
-    --surface-hover: #17171b;
-    --foreground: #f2f2f5;
-    --muted: #93939f;
-    --border: #232328;
-    --accent: #818cf8;
-    --accent-foreground: #0a0a0c;
+    --background: #121110;
+    --surface: #1a1917;
+    --surface-hover: #21201d;
+    --foreground: #ece8df;
+    --muted: #9b968b;
+    --border: #2b2926;
+    --accent: #4dbdb2;
+    --accent-foreground: #0e1413;
+    --accent-soft: #16302e;
+    --positive: #5cc08a;
+    --negative: #e07a68;
+    --warning: #e0a94a;
+    --warning-soft: #2f2617;
   }
 }
 
@@ -48,6 +68,11 @@ body {
 ::selection {
   background: var(--accent);
   color: var(--accent-foreground);
+}
+
+/* Anchored section headings sit below the sticky header when reached from the table of contents. */
+h2[id] {
+  scroll-margin-top: 5rem;
 }
 
 @keyframes ticker-scroll {

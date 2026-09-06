@@ -23,9 +23,55 @@
  *   ликвидация позиции                   518    industrial-safety and generic intent; the
  *                                               crypto reading of it is 5 shows
  */
+export type TopicId = "taxes" | "market" | "crypto";
+
+export interface TopicMeta {
+  id: TopicId;
+  label: { ru: string; en: string };
+  description: { ru: string; en: string };
+}
+
+/** The three sections the guides are grouped into on the homepage and in /blog. Order matters:
+ * it is the reading order on the page, and taxes go first because that is where the demand
+ * is (ИИС-3 alone outweighs every other query in the queue). */
+export const TOPICS: TopicMeta[] = [
+  {
+    id: "taxes",
+    label: { ru: "Налоги и вычеты", en: "Taxes and deductions" },
+    description: {
+      ru: "ИИС, вычеты, декларации — сколько платить, сколько вернуть и как это оформить.",
+      en: "Brokerage tax accounts, deductions, filing — what you owe, what you get back, how to file.",
+    },
+  },
+  {
+    id: "market",
+    label: { ru: "Биржа и инструменты", en: "Markets and instruments" },
+    description: {
+      ru: "Облигации, заявки, стакан, шорт, отсечки — как устроено то, с чем сталкивается каждый инвестор.",
+      en: "Bonds, order types, the order book, shorting, ex-dividend dates — the mechanics every investor meets.",
+    },
+  },
+  {
+    id: "crypto",
+    label: { ru: "Криптовалюты", en: "Crypto" },
+    description: {
+      ru: "Стейкинг, капитализация, вывод в рубли — без хайпа и без обещаний доходности.",
+      en: "Staking, market cap, cashing out — without the hype and without yield promises.",
+    },
+  },
+];
+
+/** Topic for a published guide, looked up by slug. Falls back to "market" for a slug this file no
+ * longer lists (a topic that was renamed or retired after publication). */
+export function topicForSlug(slug: string): TopicId {
+  return EVERGREEN_TOPICS.find((t) => t.slug === slug)?.topic ?? "market";
+}
+
 export interface EvergreenTopic {
   /** Stable URL slug — never change one after publication. */
   slug: string;
+  /** Which of the three sections the guide belongs to. */
+  topic: TopicId;
   /** The exact query this article is meant to rank for. */
   targetQuery: string;
   /** Wordstat shows per month, region 225, measured 2026-09-07. */
@@ -41,6 +87,7 @@ export interface EvergreenTopic {
 export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   {
     slug: "iis-3-chto-eto",
+    topic: "taxes",
     targetQuery: "ИИС-3",
     shows: 19653,
     workingTitle: "ИИС-3: что это, какие льготы даёт и кому подходит",
@@ -50,6 +97,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "chto-takoe-ofz-prostymi-slovami",
+    topic: "market",
     targetQuery: "что такое ОФЗ простыми словами",
     shows: 5557,
     workingTitle: "Что такое ОФЗ простыми словами: виды, доходность и как купить",
@@ -58,6 +106,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "limitnaya-i-rynochnaya-zayavka",
+    topic: "market",
     targetQuery: "лимитная заявка",
     shows: 2193,
     workingTitle: "Лимитная заявка: что это, чем отличается от рыночной и как выставить",
@@ -66,6 +115,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "nalogovyj-vychet-po-iis",
+    topic: "taxes",
     targetQuery: "налоговый вычет по ИИС",
     shows: 1996,
     workingTitle: "Налоговый вычет по ИИС: типы, суммы и как получить",
@@ -75,6 +125,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "chto-takoe-short-na-birzhe",
+    topic: "market",
     targetQuery: "что такое шорт на бирже",
     shows: 1772,
     workingTitle: "Что такое шорт на бирже простыми словами и чем он рискован",
@@ -83,6 +134,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kak-chitat-birzhevoj-stakan",
+    topic: "market",
     targetQuery: "биржевой стакан",
     shows: 1289,
     workingTitle: "Биржевой стакан: как читать и что он на самом деле показывает",
@@ -91,6 +143,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "dividendnaya-otsechka",
+    topic: "market",
     targetQuery: "дивидендная отсечка",
     shows: 879,
     workingTitle: "Дивидендная отсечка: даты, гэп и когда можно продавать акции",
@@ -99,6 +152,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kapitalizaciya-kriptovalyuty",
+    topic: "crypto",
     targetQuery: "капитализация криптовалют",
     shows: 839,
     workingTitle: "Капитализация криптовалют: как считается и почему вводит в заблуждение",
@@ -107,6 +161,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "nalog-na-kriptovalyutu",
+    topic: "taxes",
     targetQuery: "налог на криптовалюту",
     shows: 809,
     workingTitle: "Налог на криптовалюту в России: когда платить и как считать",
@@ -115,6 +170,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "chto-takoe-stejking-kriptovalyuty",
+    topic: "crypto",
     targetQuery: "стейкинг криптовалюты простыми словами",
     shows: 472,
     workingTitle: "Стейкинг криптовалюты простыми словами: как устроен и что с налогами",
@@ -124,6 +180,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kak-vyvesti-usdt-v-rubli",
+    topic: "crypto",
     targetQuery: "как вывести USDT в рубли",
     shows: 373,
     workingTitle: "Как вывести USDT в рубли: способы, комиссии и риски",
@@ -132,6 +189,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "usrednenie-pozicii",
+    topic: "market",
     targetQuery: "усреднение позиции",
     shows: 333,
     workingTitle: "Усреднение позиции: как считается средняя цена и что показывают данные",
@@ -140,6 +198,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "vliyanie-klyuchevoj-stavki",
+    topic: "market",
     targetQuery: "влияние ключевой ставки",
     shows: 330,
     workingTitle: "Как ключевая ставка влияет на облигации, акции и вклады",
@@ -148,6 +207,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kak-kupit-amerikanskie-akcii-iz-rossii",
+    topic: "market",
     targetQuery: "как купить американские акции",
     shows: 158,
     workingTitle: "Как купить американские акции из России: способы и ограничения",
@@ -156,6 +216,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "3-ndfl-kriptovalyuta",
+    topic: "taxes",
     targetQuery: "3-НДФЛ криптовалюта",
     shows: 132,
     workingTitle: "3-НДФЛ по криптовалюте: как заполнить декларацию",

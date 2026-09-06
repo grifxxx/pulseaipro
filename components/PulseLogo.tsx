@@ -1,7 +1,7 @@
 export function PulseLogo({ className }: { className?: string }) {
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-indigo-400 text-white shadow-sm ${className ?? "h-7 w-7"}`}
+      className={`flex shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground shadow-sm ${className ?? "h-7 w-7"}`}
     >
       <svg viewBox="0 0 24 24" width="62%" height="62%" fill="none" xmlns="http://www.w3.org/2000/svg">
         <polyline

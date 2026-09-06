@@ -20,18 +20,18 @@ export default async function AboutPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-4 text-sm leading-relaxed text-foreground/85">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground">{t.aboutTitle}</h1>
+      <h1 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">{t.aboutTitle}</h1>
 
       <p>{t.aboutIntro}</p>
 
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 mt-2">
+      <div className="rounded-xl border border-warning/40 bg-warning-soft p-4 mt-2">
         <h2 className="text-base font-semibold text-foreground mb-1.5">
           {t.aboutNotAdviceTitle}
         </h2>
         <p>{t.aboutNotAdviceBody}</p>
       </div>
 
-      <h2 className="text-lg font-semibold text-foreground mt-2">{t.aboutAuthorTitle}</h2>
+      <h2 className="font-serif text-xl font-semibold text-foreground mt-3">{t.aboutAuthorTitle}</h2>
       {t.aboutAuthorBody.map((paragraph, i) => (
         <p key={i}>{paragraph}</p>
       ))}
@@ -57,7 +57,7 @@ export default async function AboutPage() {
         ))}
       </ul>
 
-      <h2 className="text-lg font-semibold text-foreground mt-2">{t.aboutSourcesTitle}</h2>
+      <h2 className="font-serif text-xl font-semibold text-foreground mt-3">{t.aboutSourcesTitle}</h2>
       <ul className="flex flex-col gap-1.5">
         {t.aboutSources.map((source, i) => (
           <li key={i} className="flex gap-2">

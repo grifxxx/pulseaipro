@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import { headers } from "next/headers";
 import Link from "next/link";
 import "./globals.css";
@@ -13,7 +13,7 @@ import { SITE_NAME, SITE_URL, websiteJsonLd } from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  subsets: ["latin", "cyrillic"],
 });
 
 const geistMono = Geist_Mono({
@@ -21,16 +21,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Display face for headings and the wordmark. A serif with real Cyrillic is what separates
+// "reference publication with a named author" from "another crypto dashboard".
+const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
+  subsets: ["latin", "cyrillic"],
+  weight: ["500", "600", "700"],
+});
+
 const ROOT_COPY = {
   ru: {
-    title: `Новости акций и криптовалют сегодня — ${SITE_NAME}`,
+    title: `${SITE_NAME} — разборы для частного инвестора: налоги, ИИС, биржа, крипта`,
     description:
-      "ИИ ежедневно разбирает новости и рынок: акции США, российские акции и криптовалюты, которые сейчас в фокусе — что произошло, почему это важно, ссылки на источники. Бесплатно, без регистрации.",
+      "Понятные разборы для частного инвестора: налоги и вычеты, ИИС, облигации, биржевые инструменты, криптовалюты — с расчётами и таблицами. Плюс лента рыночных новостей. Информационный контент, не инвестиционная рекомендация.",
   },
   en: {
-    title: `${SITE_NAME} — daily AI stock & crypto news digest`,
+    title: `${SITE_NAME} — plain-language guides for private investors`,
     description:
-      "Daily AI-generated summaries of what's moving US stocks, Russian stocks and crypto in the news — informational only, not investment advice.",
+      "Guides on taxes, brokerage accounts, bonds, market mechanics and crypto, with worked examples — plus a live market news feed. Informational only, not investment advice.",
   },
 };
 
@@ -62,6 +70,9 @@ export const metadata: Metadata = {
   },
 };
 
+const navLinkClass =
+  "rounded-full px-2 sm:px-3 py-1.5 hover:bg-surface-hover hover:text-foreground transition-colors";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -74,7 +85,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <YandexMetrika />
@@ -83,34 +94,24 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
         <DisclaimerBanner locale={locale} />
-        <header className="sticky top-0 z-10 border-b border-border/80 bg-background/80 backdrop-blur-md px-4 sm:px-6 py-3.5 flex items-center justify-between gap-2">
-          <Link href="/" className="flex items-center gap-2 shrink-0 font-semibold tracking-tight">
+        <header className="sticky top-0 z-10 border-b border-border/80 bg-background/85 backdrop-blur-md px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <PulseLogo />
-            <span className="hidden sm:inline text-base">{t.siteTitle}</span>
+            <span className="hidden sm:inline font-serif text-lg font-semibold tracking-tight">
+              {t.siteTitle}
+            </span>
           </Link>
           <nav className="text-xs sm:text-sm flex gap-0.5 sm:gap-1 text-muted min-w-0">
-            <Link
-              href="/"
-              className="rounded-full px-1.5 sm:px-3 py-1.5 hover:bg-surface hover:text-foreground transition-colors"
-            >
-              {t.navFeed}
-            </Link>
-            <Link
-              href="/blog"
-              className="rounded-full px-1.5 sm:px-3 py-1.5 hover:bg-surface hover:text-foreground transition-colors"
-            >
+            <Link href="/blog" className={navLinkClass}>
               {t.navBlog}
             </Link>
-            <Link
-              href="/faq"
-              className="rounded-full px-1.5 sm:px-3 py-1.5 hover:bg-surface hover:text-foreground transition-colors"
-            >
+            <Link href="/feed" className={navLinkClass}>
+              {t.navFeed}
+            </Link>
+            <Link href="/faq" className={navLinkClass}>
               {t.navFaq}
             </Link>
-            <Link
-              href="/about"
-              className="rounded-full px-1.5 sm:px-3 py-1.5 hover:bg-surface hover:text-foreground transition-colors"
-            >
+            <Link href="/about" className={navLinkClass}>
               {t.navAbout}
             </Link>
             <AuthNav locale={locale} />

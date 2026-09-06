@@ -15,9 +15,9 @@ import { AddToPortfolioButton } from "@/components/AddToPortfolioButton";
 import { SITE_URL } from "@/lib/seo";
 
 const MARKET_DOT: Record<Market, string> = {
-  us_stock: "bg-sky-500",
-  ru_stock: "bg-violet-500",
-  crypto: "bg-orange-500",
+  us_stock: "bg-accent",
+  ru_stock: "bg-positive",
+  crypto: "bg-warning",
 };
 
 export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale: Locale }) {
@@ -58,7 +58,7 @@ export function AssetCard({ note, locale }: { note: DisplayAttentionNote; locale
               {currencySymbol}
               {note.priceSnapshot.price.toLocaleString()}{" "}
               {changePct != null && (
-                <span className={isUp ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
+                <span className={isUp ? "text-positive" : "text-negative"}>
                   {isUp ? "▲" : "▼"} {Math.abs(changePct).toFixed(2)}%
                 </span>
               )}

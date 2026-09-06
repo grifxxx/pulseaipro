@@ -85,6 +85,21 @@ interface UIStrings {
   navAbout: string;
   navFaq: string;
   navBlog: string;
+  homeHeroTitle: string;
+  homeHeroSubtitle: string;
+  homeGuidesAll: string;
+  homeFocusTitle: string;
+  homeFocusHint: string;
+  homeFocusAll: string;
+  homeAuthorTitle: string;
+  guideLabel: string;
+  tocTitle: string;
+  relatedTitle: string;
+  blogArchiveLink: string;
+  archiveTitle: string;
+  archiveSubtitle: string;
+  archiveBackToGuides: string;
+  sponsoredGroupTitle: string;
   disclaimer: string;
   footerNote: string;
   liveBadge: string;
@@ -198,7 +213,24 @@ const STRINGS: Record<Locale, UIStrings> = {
     navFeed: "Лента",
     navAbout: "О проекте",
     navFaq: "Вопросы",
-    navBlog: "Блог",
+    navBlog: "Разборы",
+    homeHeroTitle: "Разборы для частного инвестора",
+    homeHeroSubtitle:
+      "Налоги и вычеты, ИИС и облигации, биржевые инструменты, криптовалюты — на понятном языке, с расчётами и таблицами. Без советов «покупать» и «продавать».",
+    homeGuidesAll: "Все разборы",
+    homeFocusTitle: "Сейчас в фокусе",
+    homeFocusHint: "Активы, о которых сегодня больше всего пишут. Лента обновляется три раза в день.",
+    homeFocusAll: "Вся лента",
+    homeAuthorTitle: "Автор",
+    guideLabel: "Разбор",
+    tocTitle: "Содержание",
+    relatedTitle: "Читайте также",
+    blogArchiveLink: "Архив ежедневных заметок",
+    archiveTitle: "Архив ежедневных заметок",
+    archiveSubtitle:
+      "Автоматические обзоры рынка, которые выходили до перехода на разборы. Сохранены как есть и больше не обновляются.",
+    archiveBackToGuides: "← К разборам",
+    sponsoredGroupTitle: "Партнёрские материалы",
     disclaimer:
       "Информационный контент, сгенерированный ИИ на основе новостей. Это не инвестиционная рекомендация и не призыв покупать или продавать активы. Всегда проводите собственный анализ.",
     footerNote: "PulseAiPro — информационный проект. Не инвестиционная рекомендация.",
@@ -333,9 +365,10 @@ const STRINGS: Record<Locale, UIStrings> = {
           "Да. Если ввести в поиске тикер или название актива, которого ещё нет в ленте, появится кнопка «Искать актив» — сервис соберёт по нему свежие новости и котировки и добавит его в постоянное отслеживание, так что дальше он будет обновляться вместе со всеми остальными.",
       },
     ],
-    blogTitle: "Блог",
-    blogSubtitle: "Ежедневные статьи по акциям США, российским акциям и крипте — с обложкой, графиком и разбором ключевых активов дня.",
-    blogEmptyState: "Статей пока нет — они появляются по расписанию раз в день.",
+    blogTitle: "Разборы",
+    blogSubtitle:
+      "Справочные материалы по темам, которые ищут чаще всего: налоги, ИИС, биржа, криптовалюты. В каждом — прямой ответ в первом абзаце, расчёт и таблицы.",
+    blogEmptyState: "Разборов пока нет — первые появятся в ближайшие дни.",
     readArticle: "Читать статью",
     backToBlog: "← Назад к блогу",
     publishedLabel: "Опубликовано",
@@ -392,7 +425,24 @@ const STRINGS: Record<Locale, UIStrings> = {
     navFeed: "Feed",
     navAbout: "About",
     navFaq: "FAQ",
-    navBlog: "Blog",
+    navBlog: "Guides",
+    homeHeroTitle: "Plain-language guides for private investors",
+    homeHeroSubtitle:
+      "Taxes and deductions, brokerage accounts and bonds, market mechanics, crypto — explained with worked examples and tables. No buy or sell advice.",
+    homeGuidesAll: "All guides",
+    homeFocusTitle: "In focus now",
+    homeFocusHint: "The assets getting the most coverage today. The feed updates three times a day.",
+    homeFocusAll: "Full feed",
+    homeAuthorTitle: "Author",
+    guideLabel: "Guide",
+    tocTitle: "Contents",
+    relatedTitle: "Read next",
+    blogArchiveLink: "Archive of daily notes",
+    archiveTitle: "Archive of daily notes",
+    archiveSubtitle:
+      "Automated market recaps published before the switch to guides. Kept as they were; no longer updated.",
+    archiveBackToGuides: "← Back to guides",
+    sponsoredGroupTitle: "Sponsored",
     disclaimer:
       "AI-generated informational content based on news coverage. This is not investment advice and not a recommendation to buy or sell any asset. Always do your own research.",
     footerNote: "PulseAiPro is an informational project. Not investment advice.",
@@ -523,9 +573,10 @@ const STRINGS: Record<Locale, UIStrings> = {
           "Yes. Searching for a ticker or name that isn't in the feed yet shows a \"Look up asset\" button — the service gathers fresh news and quotes for it and adds it to permanent tracking, so it keeps updating alongside everything else from then on.",
       },
     ],
-    blogTitle: "Blog",
-    blogSubtitle: "Daily articles on US stocks, Russian stocks, and crypto — with a cover image, a chart, and a rundown of the day's most notable assets.",
-    blogEmptyState: "No articles yet — they're published once a day on a schedule.",
+    blogTitle: "Guides",
+    blogSubtitle:
+      "Reference pieces on the questions people actually search for: taxes, brokerage accounts, market mechanics, crypto. Each answers up front, then works through the numbers.",
+    blogEmptyState: "No guides yet — the first ones are due within days.",
     readArticle: "Read article",
     backToBlog: "← Back to blog",
     publishedLabel: "Published",
