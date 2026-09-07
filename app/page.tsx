@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getLatestFeed } from "@/lib/db/queries";
 import { getArticlesByKinds } from "@/lib/db/articles-queries";
 import { TickerTape } from "@/components/TickerTape";
-import { GuideSections } from "@/components/GuideList";
+import { GuideGrid } from "@/components/GuideList";
 import { HomeHero } from "@/components/home/HomeHero";
 import { MarketPulse } from "@/components/home/MarketPulse";
 import { UpcomingGuides } from "@/components/home/UpcomingGuides";
@@ -52,16 +52,17 @@ export default async function Home() {
         <HomeHero locale={locale} guideCount={guides.length} assetCount={notes.length} />
 
         {localizedGuides.length > 0 && (
-          <section className="flex flex-col gap-8">
-            <GuideSections articles={localizedGuides} locale={locale} limitPerTopic={4} />
-            <div>
+          <section className="flex flex-col gap-7">
+            <div className="flex items-end justify-between gap-4 flex-wrap border-b border-border pb-4">
+              <h2 className="font-serif text-2xl font-semibold tracking-tight">{t.blogTitle}</h2>
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium hover:border-accent hover:text-accent transition-colors"
+                className="text-sm font-medium text-accent hover:opacity-80 transition-opacity"
               >
                 {t.homeGuidesAll} →
               </Link>
             </div>
+            <GuideGrid articles={localizedGuides.slice(0, 6)} locale={locale} />
           </section>
         )}
 
