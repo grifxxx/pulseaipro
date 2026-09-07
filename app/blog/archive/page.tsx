@@ -15,7 +15,7 @@ const ARCHIVE_KINDS: ArticleKind[] = ["daily", "humor", "retrospective"];
 
 export const metadata: Metadata = {
   title: "Архив ежедневных заметок",
-  description: "Автоматические обзоры рынка, выходившие до перехода сайта на справочные разборы.",
+  description: "Автоматические обзоры рынка, выходившие до перехода сайта на справочные статьи.",
   alternates: { canonical: "/blog/archive" },
   // The posts themselves carry noindex; the listing that leads to them should not be in the
   // index either, or it would rank as a page full of links to nothing.

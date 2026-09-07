@@ -15,12 +15,15 @@ export const AUTHOR_NAME = "Григорий Яцунов";
 export const AUTHOR_EMAIL = LEGAL_EMAIL;
 export const AUTHOR_URL = "/about";
 
+/** Author portrait, served from /public. Square, so every crop of it stays centred. */
+export const AUTHOR_AVATAR = "/author.jpg";
+
 export const AUTHOR_BIO = {
   ru: {
     jobTitle: "предприниматель, разработчик веб-сервисов",
     short: "Около пяти лет торгует акциями на бирже. Предприниматель, разрабатывает веб-сервисы.",
     disclosure:
-      "Разборы готовит ИИ-система проекта — тема, план и требования к материалу задаются автором.",
+      "Статьи готовит ИИ-система проекта — тема, план и требования к материалу задаются автором.",
   },
   en: {
     jobTitle: "entrepreneur, web services developer",
@@ -29,6 +32,11 @@ export const AUTHOR_BIO = {
       "Guides are drafted by the project's own AI system — the topic, outline and requirements are set by the author.",
   },
 } as const;
+
+/** Public profiles. These go into sameAs, which is how a search engine ties the Person on this
+ * site to the same person elsewhere — the single most useful thing a small site can do to make
+ * an author entity recognisable. */
+export const AUTHOR_SOCIALS = [{ url: "https://vk.ru/grigorijyatc", name: "ВКонтакте" }] as const;
 
 /** Other projects by the same person, linked from the author block and emitted as sameAs.
  *
@@ -55,9 +63,10 @@ export function authorJsonLd(siteUrl: string) {
     name: AUTHOR_NAME,
     email: AUTHOR_EMAIL,
     url: `${siteUrl}${AUTHOR_URL}`,
+    image: `${siteUrl}${AUTHOR_AVATAR}`,
     jobTitle: AUTHOR_BIO.ru.jobTitle,
     description: AUTHOR_BIO.ru.short,
     knowsAbout: ["Инвестиции", "Фондовый рынок", "Криптовалюты", "Налогообложение инвестиций"],
-    sameAs: AUTHOR_PROJECTS.map((p) => p.url),
+    sameAs: [...AUTHOR_SOCIALS.map((s) => s.url), ...AUTHOR_PROJECTS.map((p) => p.url)],
   };
 }

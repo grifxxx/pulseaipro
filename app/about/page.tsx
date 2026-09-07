@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
-import { AUTHOR_PROJECTS } from "@/lib/author";
+import { AUTHOR_NAME, AUTHOR_BIO, AUTHOR_PROJECTS, AUTHOR_SOCIALS } from "@/lib/author";
+import { AuthorAvatar } from "@/components/AuthorAvatar";
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx) and written
 // separately from the on-page heading/intro so the search snippet can be clear and
@@ -9,7 +10,7 @@ import { AUTHOR_PROJECTS } from "@/lib/author";
 export const metadata: Metadata = {
   title: "О проекте PulseAiPro — кто пишет статьи и на каких данных",
   description:
-    "Автор проекта — Григорий Яцунов, около пяти лет торгует акциями, предприниматель и разработчик сервисов. Рассказываем, как готовятся разборы, откуда берутся данные и какую роль играет ИИ.",
+    "Автор проекта — Григорий Яцунов, около пяти лет торгует акциями, предприниматель и разработчик сервисов. Рассказываем, как готовятся статьи, откуда берутся данные и какую роль играет ИИ.",
   alternates: { canonical: "/about" },
 };
 
@@ -32,6 +33,27 @@ export default async function AboutPage() {
       </div>
 
       <h2 className="font-serif text-xl font-semibold text-foreground mt-3">{t.aboutAuthorTitle}</h2>
+      <div className="flex items-center gap-4">
+        <AuthorAvatar size={72} />
+        <div className="min-w-0">
+          <div className="font-serif text-lg font-semibold tracking-tight text-foreground">{AUTHOR_NAME}</div>
+          <div className="text-sm text-muted">{AUTHOR_BIO[locale].jobTitle}</div>
+          <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+            {AUTHOR_SOCIALS.map((social) => (
+              <li key={social.url}>
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener"
+                  className="font-medium text-accent hover:opacity-80 transition-opacity"
+                >
+                  {social.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
       {t.aboutAuthorBody.map((paragraph, i) => (
         <p key={i}>{paragraph}</p>
       ))}

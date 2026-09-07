@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import { headers } from "next/headers";
 import Link from "next/link";
 import "./globals.css";
-import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PulseLogo } from "@/components/PulseLogo";
 import { AuthNav } from "@/components/AuthNav";
@@ -31,9 +30,9 @@ const sourceSerif = Source_Serif_4({
 
 const ROOT_COPY = {
   ru: {
-    title: `${SITE_NAME} — разборы для частного инвестора: налоги, ИИС, биржа, крипта`,
+    title: `${SITE_NAME} — статьи для частного инвестора: налоги, ИИС, биржа, крипта`,
     description:
-      "Понятные разборы для частного инвестора: налоги и вычеты, ИИС, облигации, биржевые инструменты, криптовалюты — с расчётами и таблицами. Плюс лента рыночных новостей. Информационный контент, не инвестиционная рекомендация.",
+      "Понятные статьи для частного инвестора: налоги и вычеты, ИИС, облигации, биржевые инструменты, криптовалюты — с расчётами и таблицами. Плюс лента рыночных новостей. Информационный контент, не инвестиционная рекомендация.",
   },
   en: {
     title: `${SITE_NAME} — plain-language guides for private investors`,
@@ -93,7 +92,6 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
-        <DisclaimerBanner locale={locale} />
         <header className="sticky top-0 z-10 border-b border-border/80 bg-background/85 backdrop-blur-md px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <PulseLogo />

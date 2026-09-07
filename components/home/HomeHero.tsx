@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/types";
 import { getStrings } from "@/lib/i18n";
-import { AUTHOR_BIO, AUTHOR_NAME, AUTHOR_PROJECTS } from "@/lib/author";
+import { AUTHOR_BIO, AUTHOR_NAME, AUTHOR_PROJECTS, AUTHOR_SOCIALS } from "@/lib/author";
+import { AuthorAvatar } from "@/components/AuthorAvatar";
 
 /** The hero carries the author rather than burying them at the bottom of the page.
  *
@@ -19,7 +20,6 @@ export function HomeHero({
 }) {
   const t = getStrings(locale);
   const bio = AUTHOR_BIO[locale];
-  const initials = AUTHOR_NAME.split(" ").map((w) => w[0]).join("");
 
   const stats = [
     guideCount > 0 ? t.homeStatGuides(guideCount) : null,
@@ -71,12 +71,7 @@ export function HomeHero({
       >
         <div className="text-xs font-semibold uppercase tracking-wide text-muted">{t.homeAuthorTitle}</div>
         <div className="flex items-center gap-4">
-          <span
-            aria-hidden="true"
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent-soft font-serif text-xl font-semibold text-accent"
-          >
-            {initials}
-          </span>
+          <AuthorAvatar size={64} />
           <div className="min-w-0">
             <Link
               href="/about"
@@ -88,6 +83,20 @@ export function HomeHero({
           </div>
         </div>
         <p className="text-[15px] leading-relaxed text-foreground/85">{bio.short}</p>
+        <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          {AUTHOR_SOCIALS.map((social) => (
+            <li key={social.url}>
+              <a
+                href={social.url}
+                target="_blank"
+                rel="noopener"
+                className="font-medium text-accent hover:opacity-80 transition-opacity"
+              >
+                {social.name}
+              </a>
+            </li>
+          ))}
+        </ul>
         <ul className="flex flex-col gap-1.5 border-t border-border pt-4 text-sm">
           {AUTHOR_PROJECTS.map((project) => (
             <li key={project.url}>

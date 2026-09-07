@@ -10,9 +10,9 @@ export const revalidate = 0;
 
 // SEO title/description pinned to Russian (see the comment in app/layout.tsx).
 export const metadata: Metadata = {
-  title: "Разборы: налоги, ИИС, облигации, биржа и криптовалюты простыми словами",
+  title: "Статьи: налоги, ИИС, облигации, биржа и криптовалюты простыми словами",
   description:
-    "Справочные разборы для частного инвестора: ИИС-3 и вычеты, ОФЗ, шорт и биржевой стакан, дивидендная отсечка, налог на криптовалюту, стейкинг. С расчётами и таблицами.",
+    "Справочные статьи для частного инвестора: ИИС-3 и вычеты, ОФЗ, шорт и биржевой стакан, дивидендная отсечка, налог на криптовалюту, стейкинг. С расчётами и таблицами.",
   alternates: { canonical: "/blog" },
 };
 
@@ -67,7 +67,7 @@ export default async function BlogPage() {
           <div className="flex flex-col gap-1.5">
             <h2 className="font-serif text-2xl font-semibold tracking-tight">{t.sponsoredGroupTitle}</h2>
             <p className="text-sm leading-relaxed text-muted">
-              Отмечены и отделены от разборов, чтобы их нельзя было спутать.
+              Отмечены и отделены от статей, чтобы их нельзя было спутать.
             </p>
           </div>
           <ul className="flex flex-col">
