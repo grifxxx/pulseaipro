@@ -1,3 +1,5 @@
+import { SITE_URL } from "@/lib/seo";
+
 /** Sends a plain-text alert to the site owner's Telegram via a bot. Best-effort — a failed
  * notification is logged, never thrown, so alerting itself can never break a cron run. */
 export async function sendTelegramAlert(message: string): Promise<void> {
@@ -87,55 +89,89 @@ const SENTIMENT_EMOJI: Record<string, string> = {
   neutral: "➖",
 };
 
-// A single pipeline run can produce 30-40 notes; posting all of them would flood the channel.
-// Only notes with a strong sentiment signal are "notable" enough to post. Also reused by the
-// Zen RSS feed (lib/db/queries.ts) so both surfaces agree on what counts as significant.
-export const NOTABLE_SENTIMENT_THRESHOLD = 0.5;
-// Sequential with a delay, not Promise.all — Telegram throttles bursts to the same chat.
-const CHANNEL_POST_DELAY_MS = 1200;
+/** What it takes for an asset to earn a line in the daily digest. A note has to clear one of these
+ * on its own — a strong news signal, or a move large enough that a reader would have noticed it
+ * anyway. Both bars are deliberately high. The channel used to get one message per notable note,
+ * which measured out at 7-16 messages a day and read as spam. */
+const DIGEST_MIN_SENTIMENT = 0.6;
+const DIGEST_MIN_CHANGE_PCT = 7;
+/** Lines in one digest: enough to be worth opening, short enough to read at a glance. */
+const DIGEST_MAX_ITEMS = 3;
 
 export interface ChannelNote {
   ticker: string;
   name: string;
   sentiment: string;
   sentimentScore: number;
+  changePct: number | null;
   summary: string;
   url: string;
 }
 
-async function postSingleNoteToChannel(note: ChannelNote): Promise<void> {
+/** Ranks by news strength plus how far the price actually moved, with the price term capped so
+ * one wild micro-cap cannot crowd out a genuinely important story. */
+function digestScore(note: ChannelNote): number {
+  const move = note.changePct == null ? 0 : Math.min(Math.abs(note.changePct) / 10, 1);
+  return Math.abs(note.sentimentScore) + move;
+}
+
+function qualifies(note: ChannelNote): boolean {
+  return (
+    Math.abs(note.sentimentScore) >= DIGEST_MIN_SENTIMENT ||
+    (note.changePct != null && Math.abs(note.changePct) >= DIGEST_MIN_CHANGE_PCT)
+  );
+}
+
+/** Posts one digest of the day's most significant assets — a single message, not one per note.
+ *
+ * Called once a day (see isFirstRunOfDay in lib/db/queries.ts), and only when something actually
+ * cleared the bar: a quiet day gets no post at all rather than filler. Together with the article
+ * announcements that comes to roughly ten messages a week, which is what a channel worth staying
+ * subscribed to looks like. Best-effort — a failed post never breaks the pipeline run. */
+export async function postDailyDigestToChannel(notes: ChannelNote[]): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHANNEL_CHAT_ID;
-  if (!token || !chatId) return;
+  if (!token || !chatId) {
+    console.error("postDailyDigestToChannel: TELEGRAM_BOT_TOKEN or TELEGRAM_CHANNEL_CHAT_ID not set; skipping");
+    return;
+  }
 
-  const emoji = SENTIMENT_EMOJI[note.sentiment] ?? "📊";
-  const text = `${emoji} <b>${escapeHtml(note.name)} (${escapeHtml(note.ticker)})</b>\n\n${escapeHtml(
-    truncate(note.summary, 600)
-  )}\n\n${note.url}`;
+  const picked = notes
+    .filter(qualifies)
+    .sort((a, b) => digestScore(b) - digestScore(a))
+    .slice(0, DIGEST_MAX_ITEMS);
+  if (picked.length === 0) return;
+
+  const lines = picked.map((note) => {
+    const emoji = SENTIMENT_EMOJI[note.sentiment] ?? "📊";
+    const move =
+      note.changePct == null
+        ? ""
+        : ` ${note.changePct >= 0 ? "+" : "−"}${Math.abs(note.changePct).toFixed(1)}%`;
+    return `${emoji} <b>${escapeHtml(note.name)} (${escapeHtml(note.ticker)})</b>${move}\n${escapeHtml(
+      truncate(note.summary, 280)
+    )}\n<a href="${note.url}">Подробнее</a>`;
+  });
+
+  const text = `📊 <b>Главное за день</b>\n\n${lines.join("\n\n")}\n\nВся лента: ${SITE_URL}/feed`;
 
   try {
     const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+      }),
       signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
-      console.error(`postSingleNoteToChannel: Telegram API returned ${res.status}: ${await res.text().catch(() => "")}`);
+      console.error(`postDailyDigestToChannel: Telegram API returned ${res.status}: ${await res.text().catch(() => "")}`);
     }
   } catch (err) {
-    console.error("postSingleNoteToChannel: request failed", err instanceof Error ? err.message : err);
-  }
-}
-
-/** Posts only the notable subset (|sentimentScore| >= 0.5) of a pipeline run's notes to the
- * channel, spaced out to respect Telegram's per-chat rate limit. Best-effort per note — one
- * failed/slow send never blocks the rest. */
-export async function postNotableNotesToChannel(notes: ChannelNote[]): Promise<void> {
-  const notable = notes.filter((n) => Math.abs(n.sentimentScore) >= NOTABLE_SENTIMENT_THRESHOLD);
-  for (const note of notable) {
-    await postSingleNoteToChannel(note);
-    await new Promise((resolve) => setTimeout(resolve, CHANNEL_POST_DELAY_MS));
+    console.error("postDailyDigestToChannel: request failed", err instanceof Error ? err.message : err);
   }
 }
 
@@ -178,8 +214,8 @@ async function sendWatchlistNotification(n: WatchlistNotification): Promise<void
 }
 
 /** DMs every user who has this asset in their "Избранное" watchlist and has linked Telegram —
- * unlike the public channel, there's no sentiment threshold here: the user chose this specific
- * ticker, so every note about it is relevant to them. Best-effort per recipient. */
+ * unlike the public channel, there's no threshold here: the user chose this specific ticker, so
+ * every note about it is relevant to them. Best-effort per recipient. */
 export async function notifyWatchlistUsers(notifications: WatchlistNotification[]): Promise<void> {
   for (const n of notifications) {
     await sendWatchlistNotification(n);

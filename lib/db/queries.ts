@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { getPublicClient, getServiceClient } from "@/lib/db/supabase-client";
 import { submitToIndexNow } from "@/lib/indexnow";
-import { postNotableNotesToChannel, notifyWatchlistUsers, sendPriceAlerts } from "@/lib/notify";
+import { postDailyDigestToChannel, notifyWatchlistUsers, sendPriceAlerts } from "@/lib/notify";
 import { SITE_URL } from "@/lib/seo";
 import type {
   AttentionNote,
@@ -156,6 +156,35 @@ export async function finishPipelineRun(
   if (error) throw new Error(`finishPipelineRun failed: ${error.message}`);
 }
 
+/** True when no earlier pipeline run has started today, Moscow time — i.e. this is the day's
+ * first run. The pipeline runs three times a day; only the first of them posts the channel
+ * digest, so the channel gets one summary per day instead of three.
+ *
+ * Moscow rather than UTC because that is the audience's day, and derived from pipeline_runs
+ * rather than a new column so this needed no migration. The current run's own row already
+ * exists by the time this is called, hence the id exclusion. On a query error it returns false:
+ * failing to post is a far smaller problem than posting three times. */
+export async function isFirstRunOfDay(runId: string): Promise<boolean> {
+  const MSK_OFFSET_HOURS = 3;
+  const now = new Date();
+  const msk = new Date(now.getTime() + MSK_OFFSET_HOURS * 3600_000);
+  const mskMidnightUtc = new Date(
+    Date.UTC(msk.getUTCFullYear(), msk.getUTCMonth(), msk.getUTCDate()) - MSK_OFFSET_HOURS * 3600_000
+  );
+
+  const db = getServiceClient();
+  const { count, error } = await db
+    .from("pipeline_runs")
+    .select("id", { count: "exact", head: true })
+    .gte("started_at", mskMidnightUtc.toISOString())
+    .neq("id", runId);
+  if (error) {
+    console.error(`isFirstRunOfDay failed, skipping digest: ${error.message}`);
+    return false;
+  }
+  return (count ?? 0) === 0;
+}
+
 export async function insertAttentionNotes(
   runId: string,
   entries: { note: AttentionNote; assetId: string; priceSnapshot: PriceSnapshot | null }[]
@@ -190,16 +219,19 @@ export async function insertAttentionNotes(
     ...tickers.map((t) => `${SITE_URL}/asset/${encodeURIComponent(t)}`),
   ]);
 
-  await postNotableNotesToChannel(
-    entries.map(({ note }) => ({
-      ticker: note.ticker,
-      name: note.name,
-      sentiment: note.sentiment,
-      sentimentScore: note.sentimentScore,
-      summary: note.summary.ru,
-      url: `${SITE_URL}/asset/${encodeURIComponent(note.ticker)}`,
-    }))
-  );
+  if (await isFirstRunOfDay(runId)) {
+    await postDailyDigestToChannel(
+      entries.map(({ note, priceSnapshot }) => ({
+        ticker: note.ticker,
+        name: note.name,
+        sentiment: note.sentiment,
+        sentimentScore: note.sentimentScore,
+        changePct: priceSnapshot?.changePct24h ?? null,
+        summary: note.summary.ru,
+        url: `${SITE_URL}/asset/${encodeURIComponent(note.ticker)}`,
+      }))
+    );
+  }
 
   const assetIds = [...new Set(entries.map((e) => e.assetId))];
   const chatIdsByAsset = await getWatchlistChatIdsByAsset(assetIds);
