@@ -92,6 +92,26 @@ interface UIStrings {
   homeFocusHint: string;
   homeFocusAll: string;
   homeAuthorTitle: string;
+  homeKicker: string;
+  homeCtaGuides: string;
+  homeCtaFeed: string;
+  homeStatGuides: (n: number) => string;
+  homeStatAssets: (n: number) => string;
+  homeStatUpdates: string;
+  homeStatFree: string;
+  homeUpcomingTitle: string;
+  homeUpcomingHint: string;
+  homeUpcomingSoon: string;
+  homePulseTitle: string;
+  homePulseHint: string;
+  homePulseGainers: string;
+  homePulseLosers: string;
+  homePulseSentiment: string;
+  homeFaqTitle: string;
+  homeFaqAll: string;
+  homeTelegramTitle: string;
+  homeTelegramText: string;
+  homeTelegramCta: string;
   guideLabel: string;
   tocTitle: string;
   relatedTitle: string;
@@ -222,6 +242,26 @@ const STRINGS: Record<Locale, UIStrings> = {
     homeFocusHint: "Активы, о которых сегодня больше всего пишут. Лента обновляется три раза в день.",
     homeFocusAll: "Вся лента",
     homeAuthorTitle: "Автор",
+    homeKicker: "Справочник для частного инвестора",
+    homeCtaGuides: "Читать разборы",
+    homeCtaFeed: "Смотреть ленту",
+    homeStatGuides: (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "разбор" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? "разбора" : "разборов"}`,
+    homeStatAssets: (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "актив" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? "актива" : "активов"} в ленте`,
+    homeStatUpdates: "3 обновления в день",
+    homeStatFree: "Без регистрации",
+    homeUpcomingTitle: "Что готовим",
+    homeUpcomingHint: "Самые частые вопросы по теме — над ними сейчас работаем. Новые разборы выходят по понедельникам, средам и пятницам.",
+    homeUpcomingSoon: "Ближайший",
+    homePulseTitle: "Пульс рынка",
+    homePulseHint: "Крупнейшие движения за сутки среди активов, о которых сегодня пишут. Не рекомендация — просто то, что происходит.",
+    homePulseGainers: "Растут",
+    homePulseLosers: "Падают",
+    homePulseSentiment: "Тональность новостей",
+    homeFaqTitle: "Частые вопросы",
+    homeFaqAll: "Все вопросы",
+    homeTelegramTitle: "Телеграм-канал",
+    homeTelegramText: "Новые разборы и заметные движения рынка — по мере выхода, без ежедневного шума.",
+    homeTelegramCta: "Открыть канал",
     guideLabel: "Разбор",
     tocTitle: "Содержание",
     relatedTitle: "Читайте также",
@@ -434,6 +474,26 @@ const STRINGS: Record<Locale, UIStrings> = {
     homeFocusHint: "The assets getting the most coverage today. The feed updates three times a day.",
     homeFocusAll: "Full feed",
     homeAuthorTitle: "Author",
+    homeKicker: "A reference for private investors",
+    homeCtaGuides: "Read the guides",
+    homeCtaFeed: "Open the feed",
+    homeStatGuides: (n) => `${n} guide${n === 1 ? "" : "s"}`,
+    homeStatAssets: (n) => `${n} asset${n === 1 ? "" : "s"} tracked`,
+    homeStatUpdates: "Updated 3× a day",
+    homeStatFree: "No sign-up",
+    homeUpcomingTitle: "In the pipeline",
+    homeUpcomingHint: "The questions people ask most often about this — being written now. New guides land on Mondays, Wednesdays and Fridays.",
+    homeUpcomingSoon: "Next up",
+    homePulseTitle: "Market pulse",
+    homePulseHint: "The biggest 24-hour moves among the assets in today's news. Not advice — just what is happening.",
+    homePulseGainers: "Up",
+    homePulseLosers: "Down",
+    homePulseSentiment: "News sentiment",
+    homeFaqTitle: "Common questions",
+    homeFaqAll: "All questions",
+    homeTelegramTitle: "Telegram channel",
+    homeTelegramText: "New guides and notable market moves as they happen, without the daily noise.",
+    homeTelegramCta: "Open the channel",
     guideLabel: "Guide",
     tocTitle: "Contents",
     relatedTitle: "Read next",
