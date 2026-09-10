@@ -37,6 +37,20 @@ if [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
+# Этот скрипт обновляет $SRC через git reset — то есть переписывает сам себя, если запущен
+# оттуда. Bash дочитывает файл по мере выполнения, и вторая половина прогона берётся уже из
+# новой версии со сдвинутыми смещениями. На практике это приводило к тому, что выполнялась
+# смесь старого и нового кода. Запускать только из отдельной копии.
+case "$SRC/deploy/install.sh" in
+  "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/install.sh")
+    echo "Запущен из $SRC, который сам же и обновляется. Так нельзя — скрипт перепишет себя."
+    echo "Клонируйте во временный каталог и запускайте оттуда:"
+    echo "  rm -rf /tmp/pulsaipro && git clone --depth 1 $REPO /tmp/pulsaipro"
+    echo "  bash /tmp/pulsaipro/deploy/install.sh $DOMAIN $EMAIL"
+    exit 1
+    ;;
+esac
+
 echo "==> Исходники"
 mkdir -p "$ROOT"
 if [ -d "$SRC/.git" ]; then

@@ -100,8 +100,18 @@ Variables. `CRON_SECRET` здесь нужен только для полнот�
 
 ## Обновление сайта потом
 
-    ssh -i ~/.ssh/jino_shared_ed25519 root@200.169.176.106 \
-      'bash /opt/pulsaipro/src/deploy/install.sh pulsaipro.ru ПОЧТА'
+Всегда из свежей копии в /tmp, а не из `/opt/pulsaipro/src`: скрипт обновляет этот каталог
+через `git reset` и, запущенный оттуда, переписывает сам себя на ходу. Один раз это уже
+оставило сайт без HTTPS — выполнилась смесь старой и новой версии.
+
+    ssh -i ~/.ssh/jino_shared_ed25519 root@200.169.176.106
+    rm -rf /tmp/pulsaipro && git clone --depth 1 https://github.com/grifxxx/pulseaipro.git /tmp/pulsaipro
+    bash /tmp/pulsaipro/deploy/install.sh pulsaipro.ru ПОЧТА
+
+Если сайт вдруг начал отдавать чужую страницу по HTTPS — значит блок 443 из конфига пропал,
+и запрос ушёл в первый попавшийся TLS-блок соседнего сайта. Лечится одной командой:
+
+    certbot install --cert-name pulsaipro.ru --nginx --non-interactive
 
 ## Доступ: где я потерял время
 
