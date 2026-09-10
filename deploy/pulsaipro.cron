@@ -1,0 +1,19 @@
+# /etc/cron.d/pulsaipro
+#
+# Replaces the "crons" block in vercel.json, which only Vercel honours. Same paths, same
+# schedules, same UTC clock — Vercel cron runs in UTC and this file sets UTC explicitly so the
+# digest keeps landing at 09:00 Moscow time.
+#
+# CRON_SECRET is read from the same env file the service uses, so there is one copy of it.
+
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+CRON_TZ=UTC
+
+# The market pipeline: three passes a day. The first one also posts the channel digest.
+0 6 * * *   root  . /etc/pulsaipro.env; curl -fsS -m 900 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3100/api/cron/run-pipeline > /dev/null
+0 12 * * *  root  . /etc/pulsaipro.env; curl -fsS -m 900 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3100/api/cron/run-pipeline > /dev/null
+0 18 * * *  root  . /etc/pulsaipro.env; curl -fsS -m 900 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3100/api/cron/run-pipeline > /dev/null
+
+# One evergreen guide on Monday, Wednesday and Friday. Generation takes about three minutes.
+0 9 * * 1,3,5  root  . /etc/pulsaipro.env; curl -fsS -m 900 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3100/api/cron/generate-evergreen > /dev/null

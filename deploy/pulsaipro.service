@@ -1,0 +1,28 @@
+[Unit]
+Description=PulseAiPro (Next.js)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/pulsaipro/current
+# Secrets live outside the release directory so a redeploy never overwrites them.
+EnvironmentFile=/etc/pulsaipro.env
+Environment=NODE_ENV=production
+Environment=PORT=3100
+Environment=HOSTNAME=127.0.0.1
+ExecStart=/usr/bin/node /opt/pulsaipro/current/server.js
+Restart=always
+RestartSec=5
+
+# The app writes nothing outside its own image cache, so everything else stays read-only.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/pulsaipro/current/.next/cache
+
+[Install]
+WantedBy=multi-user.target

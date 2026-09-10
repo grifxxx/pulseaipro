@@ -8,6 +8,10 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   : undefined;
 
 const nextConfig: NextConfig = {
+  // Self-hosted on a Jino VPS behind nginx rather than on Vercel. "standalone" emits a
+  // .next/standalone directory carrying its own minimal node_modules, so a release is a single
+  // tarball and the server never needs a full npm install.
+  output: "standalone",
   images: {
     remotePatterns: supabaseHost
       ? [{ protocol: "https", hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }]
