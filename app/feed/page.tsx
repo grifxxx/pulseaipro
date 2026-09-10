@@ -4,6 +4,7 @@ import { getLatestFeed } from "@/lib/db/queries";
 import { FeedExplorer } from "@/components/FeedExplorer";
 import { TickerTape } from "@/components/TickerTape";
 import { resolveLocale, getStrings, localizeNote } from "@/lib/i18n";
+import { NOINDEX_FOLLOW } from "@/lib/seo";
 import type { AttentionNoteRow } from "@/lib/types";
 
 export const revalidate = 0;
@@ -21,6 +22,10 @@ export const metadata: Metadata = {
     "котировки",
   ],
   alternates: { canonical: "/feed" },
+  // Лента меняется трижды в день, своего поискового запроса не имеет и в выдаче
+  // конкурировала бы со статьями за вес домена. Ссылки с неё краулер по-прежнему обходит,
+  // так что карточки активов и статьи он через неё находит.
+  robots: NOINDEX_FOLLOW,
 };
 
 /** The live feed — what used to be the homepage. Moved to its own URL when the site's centre
