@@ -83,15 +83,22 @@ ln -sf "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/$DOMAIN"
 rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl reload nginx
 
-if [ ! -d "/etc/letsencrypt/live/$DOMAIN" ]; then
+# Шаг выше переписал конфиг из шаблона, а значит стёр блок 443, который добавляет certbot.
+# Поэтому TLS переустанавливается на каждом прогоне: без этого второй деплой оставлял сайт
+# без HTTPS, и запросы к домену проваливались в чужой server-блок соседнего сайта.
+command -v certbot >/dev/null || apt-get install -y -qq certbot python3-certbot-nginx
+if [ -d "/etc/letsencrypt/live/$DOMAIN" ]; then
+  echo "==> Возвращаю TLS в конфиг"
+  certbot install --cert-name "$DOMAIN" --nginx --non-interactive 2>&1 | tail -2
+else
   echo "==> Сертификат"
-  command -v certbot >/dev/null || apt-get install -y -qq certbot python3-certbot-nginx
   # Выпустится только если A-запись домена уже смотрит на этот сервер.
   certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" --non-interactive --agree-tos -m "$EMAIL" --redirect \
     || echo "    !! Не вышло — скорее всего DNS ещё не переключён. Повторите после переключения."
-else
-  echo "==> Сертификат уже есть"
 fi
+
+echo "==> Контроль: домен отвечает по HTTPS своим сайтом"
+curl -sk -m 20 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/" | grep -oE "<title>[^<]*" | head -1
 
 echo
 echo "Готово.  curl -I http://127.0.0.1:3100/   |   journalctl -u pulsaipro -f"
