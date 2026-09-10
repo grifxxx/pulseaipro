@@ -83,9 +83,6 @@ ln -sf "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/$DOMAIN"
 rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl reload nginx
 
-echo "==> Расписание"
-install -m 644 "$SRC/deploy/pulsaipro.cron" /etc/cron.d/pulsaipro
-
 if [ ! -d "/etc/letsencrypt/live/$DOMAIN" ]; then
   echo "==> Сертификат"
   command -v certbot >/dev/null || apt-get install -y -qq certbot python3-certbot-nginx
