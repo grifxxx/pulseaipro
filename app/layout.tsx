@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { PulseLogo } from "@/components/PulseLogo";
 import { AuthNav } from "@/components/AuthNav";
 import { YandexMetrika } from "@/components/YandexMetrika";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { resolveLocale, getStrings } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL, siteGraphJsonLd } from "@/lib/seo";
 
@@ -62,6 +63,16 @@ export const metadata: Metadata = {
     description: COPY.description,
     locale: "ru_RU",
   },
+  // Search Console and Webmaster both accept a meta tag as proof of ownership. Keeping the
+  // tokens in env vars means verifying a new property is a variable and a restart, not a commit.
+  verification: {
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_YANDEX_SITE_VERIFICATION
+      ? { yandex: process.env.NEXT_PUBLIC_YANDEX_SITE_VERIFICATION }
+      : {}),
+  },
   twitter: {
     card: "summary_large_image",
     title: COPY.title,
@@ -88,6 +99,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <YandexMetrika />
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraphJsonLd()) }}
