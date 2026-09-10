@@ -9,6 +9,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  keywords: ["пользовательское соглашение", "условия использования", "оферта"],
   alternates: { canonical: "/terms" },
   openGraph: { title: TITLE, description: DESCRIPTION },
 };

@@ -61,6 +61,12 @@ export const TOPICS: TopicMeta[] = [
   },
 ];
 
+/** Keywords for a published guide, looked up by slug. Empty for anything not in the queue —
+ * the sponsored posts and the old daily notes, neither of which should carry them. */
+export function keywordsForSlug(slug: string): string[] {
+  return EVERGREEN_TOPICS.find((t) => t.slug === slug)?.keywords ?? [];
+}
+
 /** Topic for a published guide, looked up by slug. Falls back to "market" for a slug this file no
  * longer lists (a topic that was renamed or retired after publication). */
 export function topicForSlug(slug: string): TopicId {
@@ -82,11 +88,15 @@ export interface EvergreenTopic {
   brief: string;
   /** Tickers/assets to link out to, if the topic naturally involves any. */
   relatedTickers?: string[];
+  /** Terms for the article's keywords meta tag. Kept to a handful of phrases the piece really
+   * answers — see the note on SITE_KEYWORDS in app/layout.tsx for why the list stays short. */
+  keywords?: string[];
 }
 
 export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   {
     slug: "iis-3-chto-eto",
+    keywords: ["ИИС-3", "индивидуальный инвестиционный счёт", "срок владения ИИС", "льготы ИИС"],
     topic: "taxes",
     targetQuery: "ИИС-3",
     shows: 19653,
@@ -97,6 +107,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "chto-takoe-ofz-prostymi-slovami",
+    keywords: ["ОФЗ", "облигации федерального займа", "доходность к погашению", "НКД"],
     topic: "market",
     targetQuery: "что такое ОФЗ простыми словами",
     shows: 5557,
@@ -106,6 +117,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "limitnaya-i-rynochnaya-zayavka",
+    keywords: ["лимитная заявка", "рыночная заявка", "стоп-лимит", "проскальзывание"],
     topic: "market",
     targetQuery: "лимитная заявка",
     shows: 2193,
@@ -115,6 +127,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "nalogovyj-vychet-po-iis",
+    keywords: ["налоговый вычет по ИИС", "вычет на взнос", "3-НДФЛ", "личный кабинет ФНС"],
     topic: "taxes",
     targetQuery: "налоговый вычет по ИИС",
     shows: 1996,
@@ -125,6 +138,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "chto-takoe-short-na-birzhe",
+    keywords: ["шорт на бирже", "лонг и шорт", "маржин-колл", "шорт-сквиз"],
     topic: "market",
     targetQuery: "что такое шорт на бирже",
     shows: 1772,
@@ -134,6 +148,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kak-chitat-birzhevoj-stakan",
+    keywords: ["биржевой стакан", "книга заявок", "бид и аск", "спред"],
     topic: "market",
     targetQuery: "биржевой стакан",
     shows: 1289,
@@ -143,6 +158,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "dividendnaya-otsechka",
+    keywords: ["дивидендная отсечка", "дивидендный гэп", "закрытие реестра", "налог с дивидендов"],
     topic: "market",
     targetQuery: "дивидендная отсечка",
     shows: 879,
@@ -152,6 +168,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kapitalizaciya-kriptovalyuty",
+    keywords: ["капитализация криптовалют", "circulating supply", "FDV", "рыночная капитализация"],
     topic: "crypto",
     targetQuery: "капитализация криптовалют",
     shows: 839,
@@ -161,6 +178,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "nalog-na-kriptovalyutu",
+    keywords: ["налог на криптовалюту", "НДФЛ с криптовалюты", "продажа криптовалюты", "декларация"],
     topic: "taxes",
     targetQuery: "налог на криптовалюту",
     shows: 809,
@@ -170,6 +188,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "chto-takoe-stejking-kriptovalyuty",
+    keywords: ["стейкинг криптовалюты", "Proof-of-Stake", "делегирование", "слэшинг"],
     topic: "crypto",
     targetQuery: "стейкинг криптовалюты простыми словами",
     shows: 472,
@@ -180,6 +199,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kak-vyvesti-usdt-v-rubli",
+    keywords: ["вывести USDT в рубли", "P2P обмен", "115-ФЗ", "комиссия за вывод"],
     topic: "crypto",
     targetQuery: "как вывести USDT в рубли",
     shows: 373,
@@ -189,6 +209,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "usrednenie-pozicii",
+    keywords: ["усреднение позиции", "средняя цена входа", "DCA", "калькулятор усреднения"],
     topic: "market",
     targetQuery: "усреднение позиции",
     shows: 333,
@@ -198,6 +219,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "vliyanie-klyuchevoj-stavki",
+    keywords: ["ключевая ставка", "влияние на облигации", "доходность облигаций", "ставка ЦБ"],
     topic: "market",
     targetQuery: "влияние ключевой ставки",
     shows: 330,
@@ -207,6 +229,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "kak-kupit-amerikanskie-akcii-iz-rossii",
+    keywords: ["купить американские акции", "зарубежный брокер", "квалифицированный инвестор", "уведомление о счёте"],
     topic: "market",
     targetQuery: "как купить американские акции",
     shows: 158,
@@ -216,6 +239,7 @@ export const EVERGREEN_TOPICS: EvergreenTopic[] = [
   },
   {
     slug: "3-ndfl-kriptovalyuta",
+    keywords: ["3-НДФЛ криптовалюта", "декларация по криптовалюте", "код дохода", "подтверждение расходов"],
     topic: "taxes",
     targetQuery: "3-НДФЛ криптовалюта",
     shows: 132,

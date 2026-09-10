@@ -145,7 +145,7 @@ export const EVERGREEN_SCHEMA = {
     type: "object",
     properties: {
       title: localizedText(
-        "Headline under 90 characters that contains the target query naturally and promises a concrete answer, not a vague topic label"
+        "Headline of at most 55 characters that contains the target query naturally and promises a concrete answer, not a vague topic label. The site appends ' · PulseAiPro' to it, and a search result shows about 60 characters in total, so anything longer is cut off mid-phrase."
       ),
       dek: localizedText(
         "One-sentence subtitle that works as the search meta description: says exactly what the reader will learn, under 155 characters"

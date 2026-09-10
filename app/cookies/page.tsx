@@ -7,6 +7,7 @@ const DESCRIPTION = "Какие файлы cookie использует PulseAiPr
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  keywords: ["файлы cookie", "политика cookie", "отключить cookie"],
   alternates: { canonical: "/cookies" },
   openGraph: { title: TITLE, description: DESCRIPTION },
 };

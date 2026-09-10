@@ -7,9 +7,15 @@ import { faqPageJsonLd } from "@/lib/seo";
 // separately from the on-page heading/subtitle so the search snippet can be clear and
 // keyword-rich without cluttering the on-site copy.
 export const metadata: Metadata = {
-  title: "Часто задаваемые вопросы — сервис новостей акций и крипты",
+  title: "Вопросы и ответы о проекте",
   description:
-    "Ответы на частые вопросы о PulseAiPro: как устроен сервис, откуда данные, как часто обновляется лента, как пользоваться поиском, графиками цены и избранным.",
+    "Как устроен PulseAiPro: кто пишет статьи, откуда берутся данные, как часто обновляется лента рынка и что означает пометка об ИИ под материалами.",
+  keywords: [
+    "вопросы и ответы",
+    "как устроен сервис",
+    "источники данных",
+    "ИИ-контент",
+  ],
   alternates: { canonical: "/faq" },
 };
 

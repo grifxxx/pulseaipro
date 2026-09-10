@@ -29,18 +29,34 @@ const sourceSerif = Source_Serif_4({
   weight: ["500", "600", "700"],
 });
 
+// Title and description are budgeted to what a search result actually shows: roughly 60
+// characters of title and 160 of description. Anything past that is truncated with an ellipsis,
+// so the words that matter have to come first.
 const ROOT_COPY = {
   ru: {
-    title: `${SITE_NAME} — статьи для частного инвестора: налоги, ИИС, биржа, крипта`,
+    title: "Налоги, ИИС, ОФЗ и криптовалюты — простыми словами",
     description:
-      "Понятные статьи для частного инвестора: налоги и вычеты, ИИС, облигации, биржевые инструменты, криптовалюты — с расчётами и таблицами. Плюс лента рыночных новостей. Информационный контент, не инвестиционная рекомендация.",
+      "Статьи для частного инвестора: ИИС и налоговые вычеты, ОФЗ, биржевые заявки, налог на криптовалюту. С расчётами, таблицами и без советов покупать.",
   },
   en: {
-    title: `${SITE_NAME} — plain-language guides for private investors`,
+    title: "Plain-language guides for private investors",
     description:
-      "Guides on taxes, brokerage accounts, bonds, market mechanics and crypto, with worked examples — plus a live market news feed. Informational only, not investment advice.",
+      "Guides on taxes, brokerage accounts, bonds, market mechanics and crypto, with worked examples. Informational only, not investment advice.",
   },
 };
+
+/** Terms the site as a whole is about. Google has ignored the keywords meta tag since 2009;
+ * Yandex's documentation says only that it "may be taken into account". It is here because it
+ * costs nothing and Yandex leaves the door open — kept short and honest for the same reason a
+ * stuffed one would hurt: long keyword lists are a classic doorway signal. */
+export const SITE_KEYWORDS = [
+  "инвестиции для начинающих",
+  "ИИС",
+  "налоговый вычет",
+  "ОФЗ",
+  "налог на криптовалюту",
+  "фондовый рынок",
+];
 
 // Crawlers (Yandex, Google, Telegram, VK, WhatsApp, …) don't reliably send an Accept-Language
 // header matching a real visitor's browser, so <title>/meta-description/og:/twitter: are all
@@ -56,6 +72,7 @@ export const metadata: Metadata = {
     template: `%s · ${SITE_NAME}`,
   },
   description: COPY.description,
+  keywords: SITE_KEYWORDS,
   openGraph: {
     type: "website",
     siteName: SITE_NAME,

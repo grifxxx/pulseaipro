@@ -19,6 +19,7 @@ import {
   truncateForDescription,
 } from "@/lib/seo";
 import { AUTHOR_BIO, AUTHOR_NAME } from "@/lib/author";
+import { keywordsForSlug } from "@/lib/content/evergreen-topics";
 import { offerForArticleSlug, offerForKey } from "@/lib/sponsors";
 import { TOPICS, topicForSlug } from "@/lib/content/evergreen-topics";
 import type { Article } from "@/lib/types";
@@ -40,6 +41,9 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
   return {
     title,
     description,
+    ...(keywordsForSlug(article.slug).length > 0
+      ? { keywords: keywordsForSlug(article.slug) }
+      : {}),
     alternates: { canonical: `/blog/${article.slug}` },
     openGraph: { title, description, images: [article.coverImageUrl] },
     ...(isIndexableArticleKind(article.kind) ? {} : { robots: NOINDEX_FOLLOW }),

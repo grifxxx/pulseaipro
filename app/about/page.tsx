@@ -9,9 +9,15 @@ import { AuthorAvatar } from "@/components/AuthorAvatar";
 // separately from the on-page heading/intro so the search snippet can be clear and
 // keyword-rich without cluttering the on-site copy.
 export const metadata: Metadata = {
-  title: "О проекте PulseAiPro — кто пишет статьи и на каких данных",
+  title: "Об авторе и о том, как готовятся статьи",
   description:
-    "Автор проекта — Григорий Яцунов, около пяти лет торгует акциями, предприниматель и разработчик сервисов. Рассказываем, как готовятся статьи, откуда берутся данные и какую роль играет ИИ.",
+    "Автор — Григорий Яцунов: около пяти лет торгует акциями, предприниматель и разработчик сервисов. Как готовятся статьи, откуда данные и какую роль играет ИИ.",
+  keywords: [
+    "Григорий Яцунов",
+    "автор PulseAiPro",
+    "об авторе",
+    "источники данных",
+  ],
   alternates: { canonical: "/about" },
 };
 
