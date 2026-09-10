@@ -8,7 +8,7 @@ import { PulseLogo } from "@/components/PulseLogo";
 import { AuthNav } from "@/components/AuthNav";
 import { YandexMetrika } from "@/components/YandexMetrika";
 import { resolveLocale, getStrings } from "@/lib/i18n";
-import { SITE_NAME, SITE_URL, websiteJsonLd } from "@/lib/seo";
+import { SITE_NAME, SITE_URL, siteGraphJsonLd } from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,7 +90,7 @@ export default async function RootLayout({
         <YandexMetrika />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraphJsonLd()) }}
         />
         <header className="sticky top-0 z-10 border-b border-border/80 bg-background/85 backdrop-blur-md px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">

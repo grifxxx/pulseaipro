@@ -16,14 +16,50 @@ export function truncateForDescription(text: string, maxLength = 155): string {
   return `${cut.slice(0, lastSpace > 0 ? lastSpace : maxLength).trimEnd()}…`;
 }
 
-export function websiteJsonLd() {
+/** Stable identifiers for the three entities this site keeps describing.
+ *
+ * Without them every page declared a fresh anonymous Organization and a fresh anonymous Person,
+ * and a search engine had no way to tell that the "PulseAiPro" publishing one article is the
+ * same one publishing the next, or that the author here is the person described on /about.
+ * With @id it is one graph: the site, its publisher, and one named author. On a YMYL topic that
+ * author entity is the part that has to be recognisable. */
+export const WEBSITE_ID = `${SITE_URL}/#website`;
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const AUTHOR_ID = `${SITE_URL}/about#author`;
+
+const SITE_DESCRIPTION =
+  "Статьи и руководства по инвестициям, налогам и криптовалютам на понятном языке, плюс лента рыночных новостей — информационный контент, не инвестиционная рекомендация.";
+
+/** Emitted once, in the root layout, so every page carries the site and publisher definitions
+ * that the per-page schemas then reference by @id. */
+export function siteGraphJsonLd() {
   return {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: SITE_NAME,
-    url: SITE_URL,
-    description:
-      "Статьи и руководства по инвестициям, налогам и криптовалютам на понятном языке, плюс лента рыночных новостей — информационный контент, не инвестиционная рекомендация.",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": WEBSITE_ID,
+        name: SITE_NAME,
+        url: SITE_URL,
+        description: SITE_DESCRIPTION,
+        inLanguage: "ru-RU",
+        publisher: { "@id": ORGANIZATION_ID },
+      },
+      {
+        "@type": "Organization",
+        "@id": ORGANIZATION_ID,
+        name: SITE_NAME,
+        url: SITE_URL,
+        description: SITE_DESCRIPTION,
+        logo: {
+          "@type": "ImageObject",
+          url: `${SITE_URL}/logo`,
+          width: 512,
+          height: 512,
+        },
+        founder: { "@id": AUTHOR_ID },
+      },
+    ],
   };
 }
 
@@ -114,16 +150,23 @@ export function blogPostingJsonLd(input: BlogPostingInput) {
     dateModified: input.datePublished,
     url: input.url,
     mainEntityOfPage: input.url,
-    author: input.authored
-      ? authorJsonLd(SITE_URL)
-      : {
-          "@type": "Organization",
-          name: SITE_NAME,
-        },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-    },
+    // By reference, not by value: the full Person lives on /about, the full Organization in the
+    // root layout, and repeating either here would just create duplicate entities.
+    author: input.authored ? { "@id": AUTHOR_ID } : { "@id": ORGANIZATION_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+  };
+}
+
+/** The full Person, emitted on /about — the page the author byline links to, and the one place
+ * that should carry the whole description. Everything else points at it by @id. */
+export function authorProfileJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": `${SITE_URL}/about`,
+    isPartOf: { "@id": WEBSITE_ID },
+    mainEntity: { ...authorJsonLd(SITE_URL), "@id": AUTHOR_ID },
   };
 }
 
@@ -142,13 +185,7 @@ export function assetArticleJsonLd(input: AssetArticleInput) {
       name: input.name,
       identifier: input.ticker,
     },
-    author: {
-      "@type": "Organization",
-      name: SITE_NAME,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-    },
+    author: { "@id": ORGANIZATION_ID },
+    publisher: { "@id": ORGANIZATION_ID },
   };
 }

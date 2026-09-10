@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { resolveLocale, getStrings } from "@/lib/i18n";
+import { authorProfileJsonLd } from "@/lib/seo";
 import { AUTHOR_NAME, AUTHOR_BIO, AUTHOR_PROJECTS, AUTHOR_SOCIALS } from "@/lib/author";
 import { AuthorAvatar } from "@/components/AuthorAvatar";
 
@@ -21,6 +22,10 @@ export default async function AboutPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-4 text-sm leading-relaxed text-foreground/85">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(authorProfileJsonLd()) }}
+      />
       <h1 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">{t.aboutTitle}</h1>
 
       <p>{t.aboutIntro}</p>
