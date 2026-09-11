@@ -23,6 +23,10 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/opt/pulsaipro/current/.next/cache
+# Кэш готовых страниц Next кладёт НЕ в .next/cache, а рядом со сборкой маршрута:
+# .next/server/app/<маршрут>.body. Без этой строки запись падает с EROFS, карта сайта
+# пересобирается на каждый запрос, а в журнале копятся ошибки — было 26 за сутки.
+ReadWritePaths=/opt/pulsaipro/current/.next/server/app
 
 [Install]
 WantedBy=multi-user.target
